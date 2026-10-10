@@ -1,4 +1,4 @@
-﻿# Agent working rules
+# Agent working rules
 
 Read README.md, INSTALL.md, and AGENT_SETUP.md before setup or scene work. Inspect local changes. Preserve student work, existing GUIDs, original third-party assets, and Camera/Keys controls. Root README and current source supersede historical control descriptions.
 

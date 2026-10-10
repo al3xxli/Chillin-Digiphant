@@ -1,4 +1,4 @@
-﻿param([switch]$SkipPython)
+param([switch]$SkipPython)
 $ErrorActionPreference = 'Stop'
 $starterCommit = '5adcbea1f7b311b8bb15c17b3dc4742ae8fff3af'
 $starterUrl = 'https://github.com/kommanderpi/studentstarter.git'
@@ -83,4 +83,3 @@ if ($LASTEXITCODE) { throw 'Tracking/encoder tests failed.' }
 & $python -m unittest discover -s Tracking -p 'test_*.py'
 if ($LASTEXITCODE) { throw 'Student screen-order tracking tests failed.' }
 Write-Host 'Setup complete. Open Assets/StudentWork/Scenes/Digiphant-Kart.unity in Unity 6000.6.3f1.'
-

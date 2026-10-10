@@ -1,4 +1,4 @@
-﻿# Installation and recovery
+# Installation and recovery
 
 Run commands from the repository root beside Assets, before opening Unity. Match ProjectSettings/ProjectVersion.txt and preserve package pins.
 

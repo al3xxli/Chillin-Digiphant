@@ -1,4 +1,4 @@
-﻿# Small project assets are stored directly in Git; no LFS installation required.
+# Small project assets are stored directly in Git; no LFS installation required.
 * text=auto
 *.cs text eol=lf diff=csharp
 *.md text eol=lf

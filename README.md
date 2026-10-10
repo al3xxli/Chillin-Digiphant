@@ -1,4 +1,4 @@
-﻿# Chillin-Digiphant
+# Chillin-Digiphant
 
 DigiPhant Kart / Rainbow Savannah is a Unity elephant racing game with local webcam tracking for team play and keyboard controls for solo play.
 

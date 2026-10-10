@@ -1,4 +1,4 @@
-﻿# Agent installation and scene setup
+# Agent installation and scene setup
 
 1. Locate the root containing Assets/Packages/ProjectSettings. Inspect OS, architecture, Git changes, scenes, and editor state. Read README.md and INSTALL.md.
 2. Match Unity 6000.6.3f1, URP 17.6.0, existing input settings and package pins. Run Setup-DigiPhant.ps1 on Windows x64, or manual INSTALL steps elsewhere. Restore starter commit 5adcbea1f7b311b8bb15c17b3dc4742ae8fff3af and verify elephant checksums/metadata.
