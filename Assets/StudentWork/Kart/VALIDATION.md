@@ -1,5 +1,24 @@
 # DigiPhant Kart verification — October 8, 2026
 
+## Lap progression update - October 10, 2026
+
+Unity 6000.6.3f1 compiled the changes and passed scene validation plus **40
+Play-mode checks** (`Logs/Kart/lap-checks.txt`, `KART_LAP_VALIDATION_OK`).
+The checks cover team-driven lap activation, safe spawn deferral, unchanged
+lap-one/slalom content, three-orange capacity and three actual trunk releases,
+refund on banana interruption, real peel collision/dizzy recovery, pause,
+respawn, every added jump/duck/banana crossing, finish, reset and replay.
+The downhill lap-three canopy has 0.25m additional clearance; it was checked
+both for an upright collision and a contact-free crouched passage.
+
+Rendered banana hazards, dizzy feedback, and the three-slot inventory HUD were
+visually inspected. The saved kart scene, original course assets, package pins,
+and project settings were not modified. Later-lap objects are created at runtime.
+These checks use automated input and physics; real team camera play and a full
+human-driven three-lap race remain unverified for this update.
+
+## Earlier verification
+
 Verified in the open Unity **6000.6.3f1** editor with **URP 17.6.0**.
 Playable scene: `Assets/StudentWork/Scenes/Digiphant-Kart.unity`.
 

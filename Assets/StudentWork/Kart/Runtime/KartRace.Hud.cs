@@ -42,14 +42,15 @@ namespace ChillinDigiphant.Kart
             GUI.Label(new Rect(right - 250, 54, 110, 25), "PLACE " + Position + " / " + racers.Length, note);
             GUI.Label(new Rect(right - 130, 29, 120, 25), Mathf.FloorToInt(Elapsed / 60).ToString("00") + ":" + (Elapsed % 60).ToString("00.00"), text);
             GUI.Label(new Rect(right - 130, 54, 120, 24), Mathf.Abs(player.Speed * 3.6f).ToString("0") + " KM/H", note);
-            Fill(new Rect(x, h - 94, 245, 72), Ink);
-            GUI.Label(new Rect(x + 14, h - 86, 225, 26), "ORANGES   " + player.Ammo + " / 3", title);
-            GUI.Label(new Rect(x + 14, h - 53, 225, 24), CameraMode ? "P" + ActionPerformer + (MixedInputs?" pinch / release: throw":" LEFT hand: throw") : "SPACE: throw    E: jump    C: duck", note);
+            Fill(new Rect(x, h - 94, 300, 72), Ink);
+            GUI.Label(new Rect(x + 14, h - 84, 170, 26), "ORANGES  " + player.Ammo + " / " + KartVehicle.Capacity, text);
+            DrawOrangeStorage(new Vector2(x + 184, h - 87));
+            GUI.Label(new Rect(x + 14, h - 53, 280, 24), CameraMode ? "P" + ActionPerformer + (MixedInputs?" pinch / release: throw":" LEFT hand: throw") : "SPACE: throw    E: jump    C: duck", note);
             if (GUI.Button(new Rect(right - 154, h - 54, 154, 32), "CONTROLS  [TAB]", button)) showMediaPipePanel = !showMediaPipePanel;
             DrawMap(new Rect(right - 160, 108, 160, 166));
             DrawOrangeReadyIndicator(scale);
             var obstacle=NextObstacle;
-            string effect = player.Recovering ? "REJOINING / GO IN A MOMENT" : player.Jumping ? "JUMPING" : player.Airborne ? "OFF THE EDGE / RETURNING TO CHECKPOINT" : player.StunRemaining > 0 ? "ORANGE HIT / SPEED RECOVERING" : player.Crouching ? "DUCKING / LOW PROFILE" : obstacle ? obstacle.Prompt : player.BoostRemaining > 0 ? "RAINBOW BOOST" : "";
+            string effect = player.Recovering ? "REJOINING / GO IN A MOMENT" : player.Jumping ? "JUMPING" : player.Airborne ? "OFF THE EDGE / RETURNING TO CHECKPOINT" : player.StunRemaining > 0 ? player.BananaHit ? "BANANA SLIP / DIZZY!" : "ORANGE HIT / SPEED RECOVERING" : player.Crouching ? "DUCKING / LOW PROFILE" : obstacle ? obstacle.Prompt : player.BoostRemaining > 0 ? "RAINBOW BOOST" : "";
             if(effect.Length>0)
             {
                 float ew=Mathf.Min(available-280,370), ex=x+(available-ew)/2;
@@ -112,7 +113,7 @@ namespace ChillinDigiphant.Kart
 #endif
             }
             GUILayout.Space(10);
-            GUILayout.Label("Collect oranges by driving through item boxes.", note);
+            GUILayout.Label("Store up to 3 oranges from item boxes. Each throw uses one. Later laps add logs, low canopies and banana peels: jump over peels to avoid a dizzy slowdown.", note);
             if (!CameraMode && GUILayout.Button(Phase == RacePhase.Practice ? "START RACE  [ENTER]" : "RESTART RACE  [ENTER]", button, GUILayout.Height(38))) StartRace();
             GUILayout.BeginHorizontal();
             if (GUILayout.Button(Paused ? "Resume [P]" : "Pause [P]", button)) TogglePause();

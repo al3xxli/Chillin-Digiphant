@@ -63,6 +63,27 @@ Collect orange boxes before throwing. P2 may sit or stand. In three-person mode 
 
 Jump over logs, duck under the canopy, and follow slalom arrows.
 
+## More challenges each lap
+
+The course grows when **your team** completes a lap:
+
+| Lap | Jump and duck challenges | Banana peels |
+| --- | --- | --- |
+| 1 / practice | Original log and low canopy | None |
+| 2 | Two logs and two low canopies | Six peels across two marked crossings |
+| 3 | Three logs and three low canopies | Twelve peels across four marked crossings |
+
+The original steering/slalom sections stay the same. Jump over yellow banana
+peels; touching one triggers the crash wobble and dizzy stars, with about a
+one-second slowdown before normal play resumes. Used peels return after five
+seconds. New hazards wait if a racer is too close to their spawn position.
+Reset or restart returns to the original first-lap course.
+
+The elephant stores **up to three oranges**. Each item box adds one until full;
+each throw uses one. The three fruit slots and `ORANGES 0 / 3` counter show what
+is stored, including during cooldown or dizziness. Full storage still consumes
+a contacted item box, and restarting empties storage.
+
 ## Setup and repository contents
 
 - [Installation and troubleshooting](INSTALL.md)

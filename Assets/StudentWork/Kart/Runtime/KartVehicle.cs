@@ -22,6 +22,7 @@ namespace ChillinDigiphant.Kart
         public const int Capacity = 3;
         public float Speed => Body ? Vector3.Dot(Body.linearVelocity, transform.forward) : 0;
         public float StunRemaining { get; private set; }
+        public bool BananaHit { get; private set; }
         public float BoostRemaining { get; private set; }
         public int CollisionCount { get; private set; }
         public int NearestPoint { get; private set; }
@@ -49,7 +50,7 @@ namespace ChillinDigiphant.Kart
             Body.position = position; Body.rotation = rotation;
             Body.linearVelocity = Body.angularVelocity = Vector3.zero;
             CompletedLaps = 0; NextGate = 1; lastGate = 0; Finished = false; FinishTime = 0;
-            Ammo = 0; StunRemaining = BoostRemaining = 0; previous = position;
+            Ammo = 0; StunRemaining = BoostRemaining = 0; BananaHit = false; previous = position;
             lastSafeTime = Time.time; recoveryUntil = Time.time; hitImmuneUntil = Time.time + 1; shotAt = -100;
             stalled = reverseUntil = 0;
             bestAIProgress = 0; aiProgressAt = Time.time;
@@ -186,7 +187,7 @@ namespace ChillinDigiphant.Kart
             {
                 CompletedLaps++;
                 if (CompletedLaps >= race.totalLaps) { Finished = true; FinishTime = race.Elapsed; FinishCollision(true); race.OnFinish(this); }
-                else if (isPlayer) race.Say("LAP " + (CompletedLaps + 1) + " / " + race.totalLaps);
+                else if (this == race.player) race.AdvanceCourse(this);
             }
             NextGate = (NextGate + 1) % race.track.gates.Length;
         }
@@ -212,9 +213,10 @@ namespace ChillinDigiphant.Kart
         }
         public bool Collect(int amount = 1)
         {
-            if (!race.CanDrive || Finished || Ammo >= Capacity) return false;
-            Ammo = Mathf.Min(Capacity, Ammo + amount);
-            if (isPlayer) race.Say("ORANGE +" + amount + "  /  " + (race.CameraMode ? race.MixedInputs ? "right pinch + release" : "hold LEFT" : "SPACE") + " to throw with trunk");
+            if (!race.CanDrive || Finished || Ammo >= Capacity || amount <= 0) return false;
+            int added = Mathf.Min(amount, Capacity - Ammo);
+            Ammo += added;
+            if (isPlayer) race.Say("ORANGE +" + added + " / STORED " + Ammo + " / " + Capacity + " / " + (race.CameraMode ? race.MixedInputs ? "pinch + release" : "hold LEFT" : "SPACE") + " to throw");
             return true;
         }
         public bool Throw()
@@ -227,14 +229,14 @@ namespace ChillinDigiphant.Kart
             return true;
         }
         public void RefundTrunkThrow() { Ammo = Mathf.Min(Capacity, Ammo + 1); shotAt = -100; }
-        public bool Hit(Vector3 impulse)
+        public bool Hit(Vector3 impulse, bool banana = false)
         {
             if (Time.time < hitImmuneUntil || Finished) return false;
-            HitCount++; StunRemaining = 1.15f; BoostRemaining=0; hitImmuneUntil=Time.time+1.7f;
+            HitCount++; StunRemaining = 1.15f; BananaHit = banana; BoostRemaining=0; hitImmuneUntil=Time.time+1.7f;
             Vector3 velocity=Body.linearVelocity; velocity.x*=.45f; velocity.z*=.45f; Body.linearVelocity=velocity;
             Body.AddForce(Vector3.ProjectOnPlane(impulse,Vector3.up)*.45f, ForceMode.VelocityChange);
             GetComponent<KartFeedback>()?.Impact();
-            if (isPlayer) race.Say("ORANGE HIT / slowing down!");
+            if (isPlayer) race.Say(banana ? "BANANA SLIP / dizzy for a moment!" : "ORANGE HIT / slowing down!");
             return true;
         }
         public void Boost() { BoostRemaining = 1.8f; if (isPlayer) race.Say("RAINBOW BOOST!"); }

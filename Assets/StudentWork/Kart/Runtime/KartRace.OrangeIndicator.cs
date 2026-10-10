@@ -7,6 +7,18 @@ namespace ChillinDigiphant.Kart
         Transform orangeIndicatorHead;
         Texture2D orangeReadyIcon;
 
+        void DrawOrangeStorage(Vector2 position)
+        {
+            if (!orangeReadyIcon) orangeReadyIcon = CreateOrangeReadyIcon();
+            Color previous = GUI.color;
+            for (int slot = 0; slot < KartVehicle.Capacity; slot++)
+            {
+                GUI.color = slot < player.Ammo ? Color.white : new Color(.4f, .4f, .4f, .4f);
+                GUI.DrawTexture(new Rect(position.x + slot * 34, position.y, 28, 32), orangeReadyIcon, ScaleMode.ScaleToFit, true);
+            }
+            GUI.color = previous;
+        }
+
         void DrawOrangeReadyIndicator(float scale)
         {
             if (!player || !player.isPlayer || !player.CanThrow) return;

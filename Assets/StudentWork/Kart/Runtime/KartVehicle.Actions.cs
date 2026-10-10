@@ -69,7 +69,7 @@ namespace ChillinDigiphant.Kart
                 if(!obstacle || !obstacle.InApproach(Body.position,32))continue;
                 float ahead=obstacle.Ahead(Body.position);
                 if(obstacle.kind==KartObstacleKind.Duck && ahead<18)SetCrouch(true);
-                else if(obstacle.kind==KartObstacleKind.Jump && ahead>0)
+                else if((obstacle.kind==KartObstacleKind.Jump || obstacle.kind==KartObstacleKind.Banana) && ahead>0)
                 {
                     if(ahead<22)drive=Mathf.Min(drive,.8f);
                     if(ahead<Mathf.Clamp(Mathf.Abs(Speed)*.44f,5.5f,11))Jump();

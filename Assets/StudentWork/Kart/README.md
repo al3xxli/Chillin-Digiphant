@@ -129,6 +129,33 @@ Keyboard: **W/S** or Up/Down accelerate/reverse; **A/D** or Left/Right steer;
 
 ## Savannah obstacles on Rainbow Road
 
+### Lap progression
+
+Practice and lap one use the original course. Completing the human player's
+first lap adds one log, one canopy, and two banana crossings (six peels).
+Completing the second lap adds another log, another canopy, and two more banana
+crossings: lap three has three logs, three canopies, and twelve peels total.
+Faster rivals cannot trigger the progression. No extra slalom or steering
+sections are added. New obstacles wait until all nearby racers are at least
+22 metres away before activating, so colliders cannot appear under a kart.
+
+Banana crossings have yellow JUMP / BANANAS warning signs. Their low triggers
+can be cleared with the existing jump action. Contact uses the existing hit
+wobble and orbiting stars, reduces speed for 1.15 seconds, and prevents throws
+during recovery. There is no additional steering input or forced steering
+reversal. The used peel disappears for five seconds; brief hit immunity prevents
+stacked impacts. Pausing also pauses recovery and respawn timers.
+
+These additions are created from existing log/canopy assets and a procedural
+peel mesh at runtime. The serialized first-lap scene and supplied course assets
+remain intact. Reset/restart hides later challenges and resets the peels.
+Bots read the active additions and jump or crouch using their existing actions.
+
+Orange storage is capped at three. The HUD now displays three filled/empty
+fruit slots alongside the count. A pickup adds one, a trunk throw reserves one,
+and an interrupted unreleased throw refunds it up to capacity. A full basket
+still consumes a contacted box. Reset empties the basket.
+
 - **Fallen log:** jump from the amber approach stripes. The hop uses Rigidbody
   velocity and accounts for uphill travel; driving straight into the log collides.
 - **Low acacia canopy:** duck before the cyan clearance markers. The driver lowers
@@ -178,6 +205,14 @@ The pre-obstacle scene is
 `Assets/StudentWork/Scenes/Kart-BeforeObstacles-20261008-131156.unity`.
 
 ## Verification and testing
+
+**DigiPhant > Kart > Validate lap progression and banana peels** opens the saved
+kart scene and runs Play-mode checks for human/rival progression, safe activation,
+three-orange collection and actual trunk releases, banana collision/recovery,
+pause, peel respawn, added log/canopy clearance, finish, and reset/replay.
+It preserves a dirty scene as a backup before opening the kart scene and exits
+Play afterward. Results are in `Logs/Kart/lap-checks.txt`; failures are in
+`lap-error.txt`. This is automated physics validation, not a physical gesture test.
 
 **DigiPhant > Kart > Validate player trunk throws** checks the real rig motion,
 held orange, delayed tip release, projectile collision, interruption handling,

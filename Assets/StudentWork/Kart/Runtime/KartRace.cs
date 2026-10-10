@@ -74,12 +74,14 @@ namespace ChillinDigiphant.Kart
             if (!PlayerTrunk.Initialize(player)) Debug.LogError("Player trunk rig is missing; trunk throws are unavailable.", player);
             orangeIndicatorHead = controller.controls.FirstOrDefault(c => c.label == "Head turn")?.bones?.FirstOrDefault();
             AttachCameraInput();
+            InitializeLapChallenges();
         }
         void Start() { ResetRace(); if (!CameraMode) SelectKeys(); }
         void OnDisable() { CancelCameraStart(); Time.timeScale = 1; DetachCameraInput();cameraInput.Reset(); if (PlayerTrunk) PlayerTrunk.Cancel(); }
-        void OnDestroy() { if (orangePhysics) Destroy(orangePhysics); if (orangeReadyIcon) Destroy(orangeReadyIcon); }
+        void OnDestroy() { if (orangePhysics) Destroy(orangePhysics); if (orangeReadyIcon) Destroy(orangeReadyIcon); DisposeLapChallenges(); }
         void Update()
         {
+            ActivateLapChallenges();
             var keys = Keyboard.current;
             if (keys != null)
             {
@@ -198,6 +200,7 @@ namespace ChillinDigiphant.Kart
             if (PlayerTrunk) PlayerTrunk.Cancel(false);
             Time.timeScale = 1; Paused = false; Phase = RacePhase.Practice; Elapsed = 0; Countdown = 0;
             for (int i = 0; i < racers.Length; i++) racers[i].ResetRace(gridPositions[i], gridRotations[i]);
+            ResetLapChallenges();
             foreach (var item in FindObjectsByType<KartPickup>(FindObjectsSortMode.None)) item.ResetPickup();
             foreach (var shot in FindObjectsByType<KartProjectile>(FindObjectsSortMode.None)) Destroy(shot.gameObject);
             foreach (var effect in FindObjectsByType<KartImpactBurst>(FindObjectsSortMode.None)) Destroy(effect.gameObject);

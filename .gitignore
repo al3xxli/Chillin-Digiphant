@@ -135,3 +135,5 @@ InitTestScene*.unity*
 /Assets/StudentWork/Scenes/*Before*.unity*
 /Assets/StudentWork/Scenes/Before-*.unity*
 /Assets/StudentWork/Scenes/*Incomplete-Snapshot.unity*
+/Assets/_Recovery/
+/Assets/_Recovery.meta
