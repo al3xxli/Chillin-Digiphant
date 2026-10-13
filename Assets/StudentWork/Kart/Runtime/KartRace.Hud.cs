@@ -49,6 +49,7 @@ namespace ChillinDigiphant.Kart
             if (GUI.Button(new Rect(right - 154, h - 54, 154, 32), "CONTROLS  [TAB]", button)) showMediaPipePanel = !showMediaPipePanel;
             DrawMap(new Rect(right - 160, 108, 160, 166));
             DrawOrangeReadyIndicator(scale);
+            DrawAudioFeedback(x, available, h);
             var obstacle=NextObstacle;
             string effect = player.Recovering ? "REJOINING / GO IN A MOMENT" : player.Jumping ? "JUMPING" : player.Airborne ? "OFF THE EDGE / RETURNING TO CHECKPOINT" : player.StunRemaining > 0 ? player.BananaHit ? "BANANA SLIP / DIZZY!" : "ORANGE HIT / SPEED RECOVERING" : player.Crouching ? "DUCKING / LOW PROFILE" : obstacle ? obstacle.Prompt : player.BoostRemaining > 0 ? "RAINBOW BOOST" : "";
             if(effect.Length>0)
@@ -120,6 +121,14 @@ namespace ChillinDigiphant.Kart
             if (GUILayout.Button("Reset [R]", button)) ResetRace();
             GUILayout.EndHorizontal();
             if (GUILayout.Button("Recover to checkpoint [Backspace]", button)) player.Recover();
+            if (Audio)
+            {
+                GUILayout.Space(10);
+                GUILayout.Label("AUDIO", text);
+                Audio.muted = GUILayout.Toggle(Audio.muted, "Mute all sound", toggle);
+                GUILayout.Label("Music", note); Audio.musicVolume = GUILayout.HorizontalSlider(Audio.musicVolume, 0, 1);
+                GUILayout.Label("Action sounds", note); Audio.effectsVolume = GUILayout.HorizontalSlider(Audio.effectsVolume, 0, 1);
+            }
             if (CameraMode)
             {
                 GUILayout.Space(10);
@@ -129,6 +138,27 @@ namespace ChillinDigiphant.Kart
             // Returning focus after any dock button also covers Pause, Reset and Start Race.
             if (!CameraMode && Event.current.type == EventType.Used && Event.current.rawType == EventType.MouseUp) FocusKeyboardPlay();
             GUILayout.EndVertical(); GUILayout.EndScrollView();
+        }
+        void DrawAudioFeedback(float x, float available, float height)
+        {
+            if (!Audio) return;
+            if (Audio.BannerRemaining > 0)
+            {
+                float bw = Mathf.Min(available - 20, 390), bx = x + (available - bw) / 2;
+                float alpha = Mathf.Clamp01(Audio.BannerRemaining * 2);
+                Fill(new Rect(bx, 162, bw, 70), new Color(Ink.r, Ink.g, Ink.b, alpha * .96f));
+                Fill(new Rect(bx, 162, bw, 4), Gold * new Color(1, 1, 1, alpha));
+                var style = new GUIStyle(title) { alignment = TextAnchor.MiddleCenter, fontSize = 28 };
+                style.normal.textColor = new Color(1, .85f, .35f, alpha);
+                GUI.Label(new Rect(bx + 8, 174, bw - 16, 40), Audio.LapBanner, style);
+            }
+            if (Audio.CaptionRemaining > 0)
+            {
+                float cw = Mathf.Min(available - 20, 240), cx = x + (available - cw) / 2;
+                Fill(new Rect(cx, height - 181, cw, 28), Ink);
+                var style = new GUIStyle(note) { alignment = TextAnchor.MiddleCenter };
+                GUI.Label(new Rect(cx + 5, height - 177, cw - 10, 22), Audio.Caption, style);
+            }
         }
         void DrawTeamControls(float width, bool inGame)
         {

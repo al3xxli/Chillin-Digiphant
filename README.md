@@ -63,6 +63,26 @@ Collect orange boxes before throwing. P2 may sit or stand. In three-person mode 
 
 Jump over logs, duck under the canopy, and follow slalom arrows.
 
+## Race music and sounds
+
+An original **Rainbow Savannah** synth-and-bell track plays quietly in practice,
+then builds during the race. Lap two slightly increases its pace. The final lap
+crossfades into a faster **160 BPM** performance (normal: **136 BPM**) with extra
+percussion and a high countervoice; it accelerates a little more as you approach
+the finish. Each finish-line crossing has a distinct lap/final-lap/victory cue
+and banner. The race music fades behind the victory fanfare.
+
+Countdown/GO, jump/landing, duck/stand, orange pickup/full basket, trunk windup/
+release, direct hits, orange impacts, banana slips, boosts, bumps, braking,
+checkpoint recovery and pause/resume have sound feedback. Motor pitch follows
+speed and throttle, and fast steering adds subtle friction. Action captions
+accompany cues. Sounds use the same gameplay events in Camera and Keys mode.
+
+The sidebar's **Audio** section has music volume, action-sound volume, and mute.
+Pause or lost driving tracking suspends playback; reset returns to the normal
+track. The bundled score and cues are original synthesized audio, inspired by
+bright celestial arcade racing, with no Nintendo recordings or melodies.
+
 ## More challenges each lap
 
 The course grows when **your team** completes a lap:

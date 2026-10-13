@@ -1,5 +1,30 @@
 # DigiPhant Kart verification — October 8, 2026
 
+## Race audio update - October 13, 2026
+
+Unity 6000.6.3f1 compiled the audio changes and passed **60 audio Play-mode
+checks** (`Logs/Kart/audio-checks.txt`, `KART_AUDIO_VALIDATION_OK`) and the existing
+**40 lap/obstacle checks** (`Logs/Kart/lap-checks.txt`, `KART_LAP_VALIDATION_OK`).
+The audio suite checked all 26 decoded clips, one active listener, actual music
+playback advancement, countdown/GO, delayed trunk release, jump/landing,
+held/released crouch, impacts/immunity, boosts, player-only lap fanfares,
+136-to-160 BPM arrangement switching, pause/resume playback position, camera
+tracking holds, victory fade, reset and persistent mute during reset.
+The lap regression checked real collisions, banana recovery, inventory/refunds,
+every added jump/duck crossing, finish and replay with the audio hooks active.
+
+The new lap/final-lap and finish banners and sidebar audio controls were rendered
+and visually inspected (`Logs/Kart/audio-final-lap.png`, `audio-finish.png`).
+Python checked all 26 authored stereo WAV files for format, finite data and
+absence of clipping. The saved scene, existing metadata and camera/key control
+mapping were preserved. Music and cues attach through KartRace at runtime.
+
+These results verify Unity playback state and automated gameplay, not listening
+on the target speakers, musical preference, or real performer gestures. Those
+remain human checks. The normal score is a 56.47-second original 32-bar loop;
+the final performance is 48 seconds with extra percussion/countervoice. Source
+is reproducible with `Tools/Audio/generate_kart_audio.py` and NumPy.
+
 ## Lap progression update - October 10, 2026
 
 Unity 6000.6.3f1 compiled the changes and passed scene validation plus **40

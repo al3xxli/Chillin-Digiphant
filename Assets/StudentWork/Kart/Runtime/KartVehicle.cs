@@ -186,6 +186,7 @@ namespace ChillinDigiphant.Kart
             if (NextGate == 0)
             {
                 CompletedLaps++;
+                if (this == race.player) race.Audio?.CrossFinishLine();
                 if (CompletedLaps >= race.totalLaps) { Finished = true; FinishTime = race.Elapsed; FinishCollision(true); race.OnFinish(this); }
                 else if (this == race.player) race.AdvanceCourse(this);
             }
@@ -210,12 +211,14 @@ namespace ChillinDigiphant.Kart
             Recoveries++; throttle=steer=0; StunRemaining=BoostRemaining=0; aiProgressAt=Time.time;
             if(isPlayer)race.locomotion.followCamera.GetComponent<KartFollowCamera>().Snap();
             if (isPlayer) race.Say("Back on track / checkpoint recovered");
+            if (this == race.player) race.Audio?.Play(KartSound.Recover, "CHECKPOINT RECOVERED");
         }
         public bool Collect(int amount = 1)
         {
             if (!race.CanDrive || Finished || Ammo >= Capacity || amount <= 0) return false;
             int added = Mathf.Min(amount, Capacity - Ammo);
             Ammo += added;
+            if (this == race.player) race.Audio?.Play(KartSound.Pickup, "ORANGE +" + added);
             if (isPlayer) race.Say("ORANGE +" + added + " / STORED " + Ammo + " / " + Capacity + " / " + (race.CameraMode ? race.MixedInputs ? "pinch + release" : "hold LEFT" : "SPACE") + " to throw");
             return true;
         }
@@ -225,6 +228,7 @@ namespace ChillinDigiphant.Kart
             bool trunkThrow = isPlayer && this == race.player;
             if (trunkThrow && (!race.PlayerTrunk || !race.PlayerTrunk.TryBegin())) return false;
             Ammo--; shotAt = Time.time;
+            if (trunkThrow) race.Audio?.Play(KartSound.Windup, "TRUNK READY");
             if (!trunkThrow) race.Launch(this);
             return true;
         }
@@ -236,14 +240,16 @@ namespace ChillinDigiphant.Kart
             Vector3 velocity=Body.linearVelocity; velocity.x*=.45f; velocity.z*=.45f; Body.linearVelocity=velocity;
             Body.AddForce(Vector3.ProjectOnPlane(impulse,Vector3.up)*.45f, ForceMode.VelocityChange);
             GetComponent<KartFeedback>()?.Impact();
+            if (this == race.player) race.Audio?.Play(banana ? KartSound.Slip : KartSound.Hit, banana ? "BANANA SLIP!" : "ORANGE HIT!");
             if (isPlayer) race.Say(banana ? "BANANA SLIP / dizzy for a moment!" : "ORANGE HIT / slowing down!");
             return true;
         }
-        public void Boost() { BoostRemaining = 1.8f; if (isPlayer) race.Say("RAINBOW BOOST!"); }
+        public void Boost() { bool fresh = BoostRemaining < .2f; BoostRemaining = 1.8f; if (isPlayer) race.Say("RAINBOW BOOST!"); if (fresh && this == race.player) race.Audio?.Play(KartSound.Boost, "BOOST!"); }
         void OnCollisionEnter(Collision collision)
         {
             if (collision.collider.gameObject.layer == KartRace.RoadLayer) return;
             CollisionCount++; LastContact = collision.collider.name;
+            if (this == race.player && collision.relativeVelocity.magnitude > 1.5f) race.Audio?.Play(KartSound.Bump, "BUMP!");
             var obstacle=collision.collider.GetComponentInParent<KartObstacle>();
             if(obstacle)
             {

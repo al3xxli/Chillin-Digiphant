@@ -46,6 +46,7 @@ namespace ChillinDigiphant.Kart
             // most of the hop's clearance before the rear axle reaches it.
             float uphill=Mathf.Max(0,race.track.Forward(NearestPoint).y*Mathf.Max(0,Speed));
             v.y=10.5f+Mathf.Max(uphill,v.y);Body.linearVelocity=v;jumpedAt=Time.time;Grounded=false;JumpCount++;
+            if(this==race.player)race.Audio?.Play(KartSound.Jump,"JUMP!");
             if(isPlayer)race.Say("HOP! / clear the log");return true;
         }
         void UpdateCrouch(float dt)
@@ -56,7 +57,10 @@ namespace ChillinDigiphant.Kart
                 int count=Physics.OverlapBoxNonAlloc(Body.position+Vector3.up*1.95f,new Vector3(1.25f,.65f,2.1f),ceilings,Body.rotation,~(1<<KartRace.RoadLayer),QueryTriggerInteraction.Ignore);
                 for(int i=0;i<count;i++) if(ceilings[i].attachedRigidbody!=Body && ceilings[i].GetComponentInParent<KartObstacle>())blocked=true;
             }
+            bool wasCrouching=Crouching;
             Crouching=(crouchRequested && race.CanDrive && !Finished)||blocked;
+            if(wasCrouching!=Crouching && this==race.player && race.CanDrive)
+                race.Audio?.Play(Crouching?KartSound.Duck:KartSound.Stand,Crouching?"DUCKING":"STANDING");
             CrouchAmount=Mathf.MoveTowards(CrouchAmount,Crouching?1:0,dt*8);
             if(standingCollider)standingCollider.enabled=!Crouching;
             if(duckCollider)duckCollider.enabled=Crouching;

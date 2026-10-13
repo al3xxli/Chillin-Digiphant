@@ -80,6 +80,7 @@ namespace ChillinDigiphant.Kart
                 {
                     LastReleasePosition = GripPosition;
                     LastProjectile = owner.race.LaunchFromTrunk(owner, LastReleasePosition);
+                    owner.race.Audio?.Play(KartSound.Throw, "ORANGE AWAY!");
                     ReleaseCount++; released = true; heldOrange.SetActive(false);
                 }
             }

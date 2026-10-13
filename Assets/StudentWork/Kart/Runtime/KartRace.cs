@@ -50,6 +50,7 @@ namespace ChillinDigiphant.Kart
         Quaternion[] gridRotations;
         float messageUntil;
         public KartTrunkThrow PlayerTrunk { get; private set; }
+        public KartAudio Audio { get; private set; }
         PhysicsMaterial orangePhysics;
         bool jumpArmed, gestureDuck;
         public KartObstacle NextObstacle
@@ -75,6 +76,8 @@ namespace ChillinDigiphant.Kart
             orangeIndicatorHead = controller.controls.FirstOrDefault(c => c.label == "Head turn")?.bones?.FirstOrDefault();
             AttachCameraInput();
             InitializeLapChallenges();
+            Audio = gameObject.AddComponent<KartAudio>();
+            Audio.Initialize(this);
         }
         void Start() { ResetRace(); if (!CameraMode) SelectKeys(); }
         void OnDisable() { CancelCameraStart(); Time.timeScale = 1; DetachCameraInput();cameraInput.Reset(); if (PlayerTrunk) PlayerTrunk.Cancel(); }
@@ -209,13 +212,14 @@ namespace ChillinDigiphant.Kart
             cameraInput.ResetActions();
             locomotion.followCamera.GetComponent<KartFollowCamera>().Snap();
             Say("PRACTICE / pick up items, or press ENTER to race");
+            if (Audio) Audio.ResetSound();
         }
         public void OnFinish(KartVehicle vehicle)
         {
             if (vehicle != player || !player.isPlayer) return;
             Phase = RacePhase.Finished; Say("FINISH! / position " + Position + " of " + racers.Length);
         }
-        public void TogglePause() { CancelCameraStart(); Paused = !Paused; throwGesture.Reset(); refillHold.Reset();cameraInput.ResetActions(); }
+        public void TogglePause() { CancelCameraStart(); Paused = !Paused; throwGesture.Reset(); refillHold.Reset();cameraInput.ResetActions(); Audio?.Play(Paused ? KartSound.Pause : KartSound.Resume); }
         public bool RequestThrow() => player.Throw();
         public int CurrentBay()
         {

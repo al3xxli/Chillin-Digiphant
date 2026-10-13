@@ -18,6 +18,7 @@ namespace ChillinDigiphant.Kart
                 consumed = true;
                 bool hit = victim.Hit((victim.transform.position - transform.position).normalized * 4);
                 if(hit && owner.isPlayer) owner.race.Say("DIRECT HIT / " + victim.racerName + " slowed!");
+                if(hit && owner==owner.race.player) owner.race.Audio?.Play(KartSound.TargetHit,"DIRECT HIT!");
                 Destroy(gameObject);
             }
             else if (++bounces > 3) Destroy(gameObject);

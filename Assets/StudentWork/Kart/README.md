@@ -206,6 +206,24 @@ The pre-obstacle scene is
 
 ## Verification and testing
 
+**DigiPhant > Kart > Validate race audio** runs Play-mode checks for imported
+audio, countdown/GO, successful and rejected jumps, landing, held/released crouch,
+actual trunk release, pickups, impacts/immunity, boosts, player-only lap music,
+final-lap tempo, pause/resume, finish fade and reset/mute. Reports are written to
+`Logs/Kart/audio-checks.txt` (errors: `audio-error.txt`). Listening on the target
+speakers and testing real team gestures remain separate from these checks.
+
+`Runtime/KartAudio.cs` attaches automatically without changing the saved scene.
+The original 32-bar **Rainbow Savannah** score has 136 and 160 BPM performances,
+phrase-aligned final-lap crossfade, gentle lap/progress acceleration, and music
+ducking under lap/hit fanfares. Both music and effects are 2D so direction/camera
+distance cannot hide feedback. All sounds ship in `Resources/KartAudio`.
+`Tools/Audio/generate_kart_audio.py` reproduces the WAVs with Python/NumPy.
+Music/effects sliders and mute are in the existing controls sidebar. Muting
+preserves captions. Pause/tracking holds suspend voices without restarting the
+score; reset/restart clears the final arrangement. Rivals never trigger your
+action sounds or lap fanfares.
+
 **DigiPhant > Kart > Validate lap progression and banana peels** opens the saved
 kart scene and runs Play-mode checks for human/rival progression, safe activation,
 three-orange collection and actual trunk releases, banana collision/recovery,

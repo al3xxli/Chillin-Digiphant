@@ -29,6 +29,7 @@ namespace ChillinDigiphant.Kart
             availableAt = Time.time + respawnSeconds; trigger.enabled = false; visual.gameObject.SetActive(false);
             bool awarded = kart.Collect();
             if (!awarded && kart.isPlayer) kart.race.Say("ITEM BOX CLAIMED / basket already full");
+            if (!awarded && kart==kart.race.player) kart.race.Audio?.Play(KartSound.Full,"BASKET FULL");
         }
         public void ResetPickup() { availableAt = 0; if(trigger)trigger.enabled=true; if(visual)visual.gameObject.SetActive(true); }
     }
