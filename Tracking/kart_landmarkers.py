@@ -107,7 +107,7 @@ class KartLandmarkers:
                     ratio = pinch_ratio(local)
                     shape = hand_shape(world_hands[hand_index] if hand_index < len(world_hands) else local)
                     if ratio is not None:
-                        candidates.append((ratio, full, shape or dict(fist=0, pinchAllowed=False)))
+                        candidates.append((ratio, full, shape or dict(fist=0, pinchAllowed=False, peace=False)))
                 elif count != 3:
                     self.hand_status = f'P{hand_slot}: keep your RIGHT hand separate and wrist visible'
             if len(candidates) == 1:

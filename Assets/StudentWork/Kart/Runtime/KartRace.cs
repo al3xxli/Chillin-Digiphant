@@ -167,7 +167,6 @@ namespace ChillinDigiphant.Kart
                     bool driveVisible=controller.IsMovementVisible(1,Movement.LeftHandHeight,now) && controller.IsMovementVisible(1,Movement.RightHandHeight,now);
                     MovementStatus=!controller.IsCalibrated ? !driveVisible ? "P1: show both wrists and shoulders for neutral" :
                         !cameraInput.ShouldersVisible(now) ? "P"+SteeringPerformer+": show both shoulders for steering" :
-                        literalBodyActions && !cameraInput.BodyVisible(now) ? "P"+BodyPerformer+": keep BOTH feet in view for neutral" :
                         "Set neutral: hands down, body upright, shoulders relaxed" : !travel ? "P1: show wrists and shoulders" :
                         !steering ? "P"+SteeringPerformer+": show both shoulders / steering lost" : "Body + shoulders driving ready";
                 }
@@ -176,7 +175,7 @@ namespace ChillinDigiphant.Kart
         }
         public void ReadObstacleGestures(float now)
         {
-            if(literalBodyActions)
+            if(MixedInputs || literalBodyActions)
             {
                 player.SetCrouch(cameraInput.IsDucking(now));
                 if(cameraInput.TakeJump(now))player.RequestJump();

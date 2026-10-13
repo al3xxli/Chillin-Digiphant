@@ -1,5 +1,33 @@
 # DigiPhant Kart verification — October 8, 2026
 
+## P3 peace-sign jumping - October 13, 2026
+
+The default mixed team layout now assigns jumping to P3's index/middle peace
+sign; P1 foot lifts and body movement do not jump. P3 keeps fist crouch and
+pinch-release throwing. P1 feet are optional for calibration; Full body driving
+still uses hips, while Seated / upper body tracking uses shoulders and wrists.
+The previous P2 sensitivity adjustment (shoulder range 0.28) is preserved.
+
+- **Python:** 40 tests passed, including all 16 extended/curled finger patterns,
+  mirrored/rotated/scaled peace hands, thumb independence, and P3 hand-only
+  packet routing in both preview orientations. These use synthetic landmarks.
+- **Unity compilation:** runtime and editor assemblies compiled successfully;
+  existing deprecated-API warnings remain.
+- **Unity Play mode:** 76 input checks passed (`Logs/Kart/input-checks.txt`,
+  `KART_INPUT_VALIDATION_OK`), covering release/rearm, one-shot held peace,
+  tracking gaps, P1 rejection, no P1 body requirement, pinch/peace separation,
+  actual Rigidbody jumps and momentum, fist-to-peace clearance, trunk throws,
+  steering, keyboard fallback, and collision clearance.
+- **Camera start:** 12 checks passed (`Logs/Kart/camera-start-checks.txt`,
+  `KART_CAMERA_START_VALIDATION_OK`), including calibration with P1 feet absent,
+  automatic countdown/start, tracking loss, cancellation, and Keys fallback.
+
+Play-mode checks inject synthetic packets. Real peace-sign inference,
+comfortable timing, hand transitions, and simultaneous team play still need a
+performer/camera check. Restart the camera bridge to load the new hand classifier.
+Earlier foot-lift validation below records the superseded mapping.
+
+
 ## Race audio update - October 13, 2026
 
 Unity 6000.6.3f1 compiled the audio changes and passed **60 audio Play-mode

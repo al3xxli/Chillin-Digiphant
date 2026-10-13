@@ -42,27 +42,31 @@ namespace ChillinDigiphant.Kart.Editor
         static BodyMotionFrame Body(float lift=0,float drop=0,bool rightFoot=false,float rise=0) => new BodyMotionFrame
         {hipY=.55f-rise*.25f+drop*.25f,shoulderY=.3f-rise*.25f+drop*.25f,
             leftFootY=.9f-rise*.25f-(rightFoot?0:lift*.25f),rightFootY=.9f-rise*.25f-(rightFoot?lift*.25f:0),scale=.25f,confidence=1};
-        static PoseFrame Packet(BodyMotionFrame body=null,float shrug=0,float pinch=1,float fist=0,bool pinchAllowed=true)
+        static PoseFrame Packet(BodyMotionFrame body=null,float shrug=0,float pinch=1,float fist=0,bool pinchAllowed=true,bool peace=false)
         {
             var p=new PoseFrame {version=1,performerCount=3,kartStatus="Synthetic test",people=Enumerable.Range(1,3).Select(i=>new PerformerFrame
                 {slot=i,values=new float[6],confidence=Enumerable.Repeat(1f,6).ToArray(),handForward=new float[2],handForwardConfidence=new[]{1f,1f}}).ToArray()};
-            p.people[0].body=body??Body();p.people[1].shoulders=new ShoulderMotionFrame{turn=shrug,confidence=1};p.people[2].hand=new HandMotionFrame{pinch=pinch,fist=fist,pinchAllowed=pinchAllowed,confidence=1};
+            p.people[0].body=body??Body();p.people[1].shoulders=new ShoulderMotionFrame{turn=shrug,confidence=1};p.people[2].hand=new HandMotionFrame{pinch=pinch,fist=fist,pinchAllowed=pinchAllowed,peace=peace,confidence=1};
             p.people[2].confidence=new float[6]; // Independent hand-only role, no torso/pose confidence.
             return p;
         }
         static void Feed(KartCameraInput input,PoseFrame p,float now)=>input.Receive(p,now,1,2,3);
         static KartCameraInput Ready(float time=1)
         {
-            var input=new KartCameraInput();Feed(input,Packet(),time);Require(input.Calibrate(time,true,true),"Standing body and shoulders calibrate");
+            var input=new KartCameraInput();Feed(input,Packet(),time);Require(input.Calibrate(time,false,true),"Shoulders calibrate without requiring P1 feet");
             Feed(input,Packet(),time+.05f);Feed(input,Packet(),time+.20f);return input;
         }
         static void Sequences()
         {
-            var input=Ready();Feed(input,Packet(Body(.2f)),1.22f);Feed(input,Packet(Body(.2f)),1.26f);
-            Require(input.TakeJump(1.26f)&&!input.TakeJump(1.26f),"Lifting only the left foot with still hips gives exactly one jump");
-            Feed(input,Packet(Body(.3f)),1.35f);Require(!input.TakeJump(1.35f),"Holding the foot up cannot repeat the jump");
-            Feed(input,Packet(),1.42f);Feed(input,Packet(),1.58f);Feed(input,Packet(Body(.2f,rightFoot:true)),1.62f);Feed(input,Packet(Body(.2f,rightFoot:true)),1.66f);
-            Require(input.TakeJump(1.66f),"Lowering the foot rearms a jump from the other foot");
+            var input=Ready();Feed(input,Packet(Body(.2f)),1.22f);Feed(input,Packet(Body(.2f)),1.32f);
+            Require(!input.TakeJump(1.32f),"P1 left foot no longer triggers a jump");
+            Feed(input,Packet(Body(.2f,rightFoot:true)),1.36f);Feed(input,Packet(Body(.2f,rightFoot:true)),1.46f);
+            Require(!input.TakeJump(1.46f),"P1 right foot no longer triggers a jump");
+            Feed(input,Packet(peace:true),1.5f);Require(!input.TakeJump(1.5f),"One peace-sign frame cannot jump");
+            Feed(input,Packet(peace:true),1.6f);
+            Require(input.TakeJump(1.6f)&&!input.TakeJump(1.6f)&&!input.TakeThrow(1.6f),"P3 peace sign jumps exactly once without throwing");
+            Feed(input,Packet(peace:true),1.7f);Feed(input,Packet(peace:true),1.8f);
+            Require(!input.TakeJump(1.8f),"Holding a peace sign cannot repeat the jump");
             Feed(input,Packet(fist:1,pinch:.2f,pinchAllowed:false),2f);Require(input.IsDucking(2f),"P3 fist engages crouch independently of body lowering");
             Feed(input,Packet(fist:.55f,pinch:.2f,pinchAllowed:false),2.08f);Require(input.IsDucking(2.08f),"Fist hysteresis holds through small finger jitter");
             Feed(input,Packet(),2.16f);Require(!input.IsDucking(2.16f)&&!input.TakeThrow(2.16f),"Opening a fist stands up without throwing");
@@ -81,29 +85,37 @@ namespace ChillinDigiphant.Kart.Editor
             missing=Packet();missing.people[0].body.hipY=float.NaN;Feed(input,missing,4.2f);
             Require(!input.BodyReady(4.2f)&&!input.IsDucking(4.2f),"Malformed optional body data cannot trigger actions");
             input.Reset();Require(!input.Calibrated&&!input.ShouldersVisible(4.3f)&&!input.TakeJump(4.3f),"Reassignment clears neutral and all gesture latches");
-            var airborne=new KartCameraInput();Feed(airborne,Packet(Body(.2f)),1);
-            Require(!airborne.TakeJump(1),"Uncalibrated observations cannot jump");
+            var airborne=new KartCameraInput();Feed(airborne,Packet(peace:true),1);Feed(airborne,Packet(peace:true),1.1f);
+            Require(!airborne.TakeJump(1.1f),"Uncalibrated observations cannot jump");
             input=Ready(10);Feed(input,Packet(Body(drop:.4f)),10.25f);
-            Require(!input.IsDucking(10.25f)&&!input.TakeJump(10.25f),"Squatting the body no longer crouches or triggers a foot jump");
+            Require(!input.IsDucking(10.25f)&&!input.TakeJump(10.25f),"P1 squatting cannot crouch or jump");
             input=Ready(11);Feed(input,Packet(Body(rise:.3f)),11.25f);
-            Require(!input.TakeJump(11.25f),"Whole-body movement cannot masquerade as a lifted foot");
+            Require(!input.TakeJump(11.25f),"P1 whole-body movement cannot jump");
             input=Ready(12);Feed(input,Packet(Body(.04f)),12.25f);Feed(input,Packet(Body(.04f)),12.30f);
             Require(!input.TakeJump(12.30f),"Small foot jitter stays below the jump threshold");
             input=Ready(13);missing=Packet(fist:1,pinchAllowed:false);missing.people[0].body=null;Feed(input,missing,13.25f);
             Require(input.IsDucking(13.25f),"P3 fist does not depend on P1 feet remaining visible");
             input=Ready(14);Feed(input,Packet(pinch:.2f),14.25f);Feed(input,Packet(pinch:.2f,fist:.3f,pinchAllowed:false),14.33f);Feed(input,Packet(),14.42f);
             Require(!input.TakeThrow(14.42f),"Curling spare fingers cancels a pinch before it can become an accidental fist-release throw");
-            input=Ready(15);missing=Packet();missing.people[0].body=null;Feed(input,missing,15.5f);
-            Feed(input,Packet(Body(.2f)),15.6f);Feed(input,Packet(Body(.2f)),15.65f);
-            Require(!input.TakeJump(15.65f),"Reacquiring a raised foot after long loss requires lowering before a jump");
-            input=Ready(16);missing=Packet();missing.people[0].body=null;Feed(input,missing,16.24f);
-            Feed(input,Packet(Body(.2f)),16.30f);Feed(input,Packet(Body(.2f)),16.35f);
-            Require(input.TakeJump(16.35f),"A brief ankle dropout does not swallow the next deliberate lift");
-            input=Ready(17);var balancing=Body(.2f);balancing.hipY-=.15f*.25f;
-            Feed(input,Packet(balancing),17.24f);Feed(input,Packet(balancing),17.30f);
-            Require(input.TakeJump(17.30f),"Raising the hip while balancing does not prevent a one-foot jump");
-            input=Ready(18);Feed(input,Packet(Body(.2f)),18.24f);Feed(input,Packet(),18.30f);
-            Require(!input.TakeJump(18.30f),"A single-frame ankle spike cannot trigger a jump");
+            input=Ready(15);missing=Packet(peace:true);missing.people[0].body=null;
+            Feed(input,missing,15.22f);Feed(input,missing,15.32f);
+            Require(input.TakeJump(15.32f),"P3 peace jump works without P1 hips or feet");
+            Feed(input,Packet(),15.4f);Feed(input,Packet(peace:true),15.45f);Feed(input,Packet(peace:true),15.55f);
+            Require(!input.TakeJump(15.55f),"Brief peace-sign flicker does not rearm a held jump");
+            Feed(input,Packet(),15.6f);Feed(input,Packet(),15.74f);
+            Feed(input,Packet(peace:true),15.78f);Feed(input,Packet(peace:true),15.88f);
+            Require(input.TakeJump(15.88f),"Relaxing fingers rearms the next peace jump");
+            input=Ready(16);Feed(input,Packet(peace:true),16.22f);missing=Packet();missing.people[2].hand=null;
+            Feed(input,missing,16.26f);Feed(input,Packet(peace:true),16.32f);
+            Require(!input.TakeJump(16.32f),"Missing hand frames do not count toward the peace dwell");
+            Feed(input,Packet(peace:true),16.42f);Require(input.TakeJump(16.42f),"Stable peace after a brief dropout still jumps");
+            Feed(input,missing,16.48f);Feed(input,Packet(peace:true),16.55f);Feed(input,Packet(peace:true),16.65f);
+            Require(!input.TakeJump(16.65f),"Brief hand loss cannot repeat a held peace jump");
+            Feed(input,missing,17f);Feed(input,Packet(peace:true),17.1f);Feed(input,Packet(peace:true),17.2f);
+            Require(!input.TakeJump(17.2f),"Long hand loss requires a release before a new peace jump");
+            input=Ready(18);Feed(input,Packet(pinch:.2f),18.22f);Feed(input,Packet(peace:true),18.3f);Feed(input,Packet(peace:true),18.4f);
+            Require(input.TakeJump(18.4f)&&!input.TakeThrow(18.4f),"Pinch to peace cancels the pending throw and jumps");
+            Feed(input,Packet(),18.5f);Require(!input.TakeThrow(18.5f),"Peace release cannot throw an orange");
             input=new KartCameraInput();Feed(input,Packet(shrug:.12f),19);input.Calibrate(19,true,true);
             Feed(input,Packet(shrug:.12f),19.1f);Require(Mathf.Abs(input.Steering)<.001f,"Relaxed uneven shoulders calibrate to straight driving");
             Feed(input,Packet(shrug:-.23f),19.2f);Require(input.Steering<-.2f,"Left shrug steers relative to the calibrated shoulder posture");
@@ -112,15 +124,28 @@ namespace ChillinDigiphant.Kart.Editor
             input=Ready(30);Feed(input,Packet(pinch:.2f),30.3f);missing=Packet();missing.people[2].hand=null;
             Feed(input,missing,30.6f);Feed(input,Packet(),30.7f);
             Require(!input.TakeThrow(30.7f),"Long hand loss then open reacquisition cannot throw");
+            input=Ready(35);missing=Packet(peace:true);missing.people[0].hand=missing.people[2].hand;missing.people[2].hand=null;
+            Feed(input,missing,35.22f);Feed(input,missing,35.32f);
+            Require(!input.TakeJump(35.32f),"A peace sign from P1 cannot trigger P3's jump");
+            input=Ready(36);missing=Packet(peace:true);missing.people[2].hand.confidence=.2f;
+            Feed(input,missing,36.22f);Feed(input,missing,36.32f);
+            Require(!input.TakeJump(36.32f),"Low-confidence peace frames cannot jump");
+            input=Ready(37);Feed(input,Packet(fist:1,peace:true),37.22f);Feed(input,Packet(fist:1,peace:true),37.32f);
+            Require(input.IsDucking(37.32f)&&!input.TakeJump(37.32f),"Conflicting fist and peace packet cannot crouch and jump together");
+            input.ResetActions();Feed(input,Packet(peace:true),37.42f);Feed(input,Packet(peace:true),37.52f);
+            Require(!input.TakeJump(37.52f),"Resetting while peace is held requires relaxing the fingers");
+            input=new KartCameraInput();missing=Packet();missing.people[0].body=null;Feed(input,missing,38);
+            Require(input.Calibrate(38,false,true),"Neutral can be saved with no P1 body channel");
             input=new KartCameraInput();Feed(input,Packet(pinch:.2f),40);
             Require(input.HandFeedback(40).Contains("pinched")&&!input.TakeThrow(40),"Hand-only pinch feedback works before calibration without firing");
         }
-        static void CameraFrame(float lift=0,float fist=0,float shrug=0,float pinch=1,float drive=0)
+        static void CameraFrame(float lift=0,float fist=0,float shrug=0,float pinch=1,float drive=0,bool peace=false)
         {
-            var p=Packet(Body(lift),shrug,pinch,fist,fist<.45f);p.upperBodyOnly=race.controller.upperBodyOnly;p.previewFormat=2;p.mirrorPreview=race.Preview.mirrorPreview;
+            var p=Packet(Body(lift),shrug,pinch,fist,fist<.45f && !peace,peace);p.upperBodyOnly=race.controller.upperBodyOnly;p.previewFormat=2;p.mirrorPreview=race.Preview.mirrorPreview;
             // Shoulder performer does not need visible wrists in mixed mode.
             p.people[1].confidence[0]=p.people[1].confidence[1]=0;
             p.people[0].values[0]=drive;
+            p.people[0].body=null; // All hand actions and team calibration work with feet cropped out.
             RequirePacket(race.controller.AcceptPacket(JsonUtility.ToJson(p),Time.realtimeSinceStartup));
         }
         static void RequirePacket(bool accepted){if(!accepted)throw new Exception("Optional packet rejected");}
@@ -143,8 +168,8 @@ namespace ChillinDigiphant.Kart.Editor
             }
             else if(stage==2)
             {
-                CameraFrame(.2f,drive:1);if(elapsed<.25f)return;
-                Require(race.player.JumpCount==jumps+1 && race.player.Body.linearVelocity.y>0,"One lifted foot launches the actual Rigidbody upward");
+                CameraFrame(peace:true,drive:1);if(elapsed<.25f)return;
+                Require(race.player.JumpCount==jumps+1 && race.player.Body.linearVelocity.y>0,"P3 peace sign launches the actual Rigidbody upward");
                 Require(race.player.Speed>.20f,"Accelerating during a jump from low speed produces forward movement in the air");Next(3);
             }
             else if(stage==3)
@@ -158,12 +183,12 @@ namespace ChillinDigiphant.Kart.Editor
             }
             else if(stage==5)
             {
-                CameraFrame(.2f);if(elapsed<.25f)return;
-                Require(!race.player.Crouching && race.player.JumpCount==jumps+2,"Opening P3 fist and lifting P1 foot restores clearance and launches the kart");race.player.Collect(3);Next(6);
+                CameraFrame(peace:true);if(elapsed<.25f)return;
+                Require(!race.player.Crouching && race.player.JumpCount==jumps+2,"Changing P3 fist to peace restores clearance and launches the kart");race.player.Collect(3);Next(6);
             }
             else if(stage==6)
             {
-                CameraFrame(pinch:.2f);if(elapsed<.2f)return;Next(7);
+                CameraFrame(pinch:elapsed<.12f?1:.2f);if(elapsed<.32f)return;Next(7);
             }
             else if(stage==7)
             {
@@ -190,8 +215,8 @@ namespace ChillinDigiphant.Kart.Editor
             }
             else if(stage==12)
             {
-                CameraFrame(.2f,drive:1);if(elapsed<.40f)return;
-                Require(race.player.JumpCount==jumps+1 && race.player.Jumping,"A foot lift while driving launches one moving jump");
+                CameraFrame(peace:true,drive:1);if(elapsed<.40f)return;
+                Require(race.player.JumpCount==jumps+1 && race.player.Jumping,"A peace sign while driving launches one moving jump");
                 Require(race.player.Speed>=takeoffSpeed*.90f && Vector3.Distance(takeoffPosition,race.player.Body.position)>takeoffSpeed*.30f,"Moving jump retains forward momentum and travels down the course");
                 report+="Measured moving jump: takeoff="+takeoffSpeed.ToString("F2")+" m/s; in-flight="+race.player.Speed.ToString("F2")+" m/s; travel="+Vector3.Distance(takeoffPosition,race.player.Body.position).ToString("F2")+" m\n";
                 takeoffSpeed=race.player.Speed;Next(13);

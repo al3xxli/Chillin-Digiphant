@@ -9,5 +9,5 @@ namespace DigiPhant
     }
     [Serializable] public sealed class FaceMotionFrame { public float turn, confidence; }
     [Serializable] public sealed class ShoulderMotionFrame { public float turn, confidence; }
-    [Serializable] public sealed class HandMotionFrame { public float pinch, fist, confidence; public bool pinchAllowed; }
+    [Serializable] public sealed class HandMotionFrame { public float pinch, fist, confidence; public bool pinchAllowed, peace; }
 }

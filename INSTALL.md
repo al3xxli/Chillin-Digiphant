@@ -30,7 +30,7 @@ Preserve Elephant metadata and review the starter asset-checksums.json and terms
 - Setup failure: inspect the first error, network, pinned commit, and interpreter. Preserve incomplete environments for diagnosis before recreating.
 - Missing hand model: run Tracking/kart_landmarkers.py with the installed environment Python.
 - No camera: check index, OS permission, competing applications, and other bridge sessions using localhost 5055–5057.
-- No movement: check role zones, P1 feet/wrists, P2 shoulders, and neutral calibration. Open P3's hand before preparing a fresh pinch. Use Keys to isolate gameplay from tracking.
+- No movement: check role zones, P1 shoulders/wrists (plus hips in Full body tracking), P2 shoulders, and neutral calibration. Relax P3's fingers between peace-sign jumps; open the hand before preparing a fresh pinch. Use Keys to isolate gameplay from tracking.
 - Pink materials/compilation errors: match the editor and allow package restoration; inspect Console before changing pipeline.
 
 Run pip check, Python tests, Unity compilation, and DigiPhant > Kart > Validate scene. Test keyboard driving, steering, pickup/throw, jump, crouch, race start, and pause in Game view. Then test real team gestures, calibration, mirror, simultaneous roles, and loss/recovery. A clean clone/import and physical test are necessary on each target setup.

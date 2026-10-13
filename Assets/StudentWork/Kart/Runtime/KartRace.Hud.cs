@@ -190,7 +190,7 @@ namespace ChillinDigiphant.Kart
             }
             GUILayout.Label(MixedInputs ? "P1 BODY: left hand drives / right brakes\nP" + SteeringPerformer + " SHOULDERS: " + ShoulderSteeringHelp + "\nP" + ActionPerformer + " HAND: " + (count == 3 ? "one hand only / " : "right hand / ") + "pinch + release throws" :
                 "P1: left hand drives / right brakes\nP" + SteeringPerformer + ": raise left / right hand to steer\nP" + ActionPerformer + ": hold left hand to throw", note);
-            GUILayout.Label(MixedInputs ? (literalBodyActions ? "P1: lift either foot to jump; lower it to rearm. Keep both feet visible." : "P" + ActionPerformer + ": raise right hand to jump.") + "\nP" + ActionPerformer + ": hold a fist to crouch; open to stand." : literalBodyActions ? "P" + BodyPerformer + ": jump and duck with your body. Keep feet visible." : "P" + ActionPerformer + ": raise right hand to jump / lean right to duck.", note);
+            GUILayout.Label(MixedInputs ? "P" + ActionPerformer + ": peace sign (index + middle up) to jump; relax fingers to rearm." + "\nP" + ActionPerformer + ": hold a fist to crouch; open to stand." : literalBodyActions ? "P" + BodyPerformer + ": jump and duck with your body. Keep feet visible." : "P" + ActionPerformer + ": raise right hand to jump / lean right to duck.", note);
         }
         void DrawAdvancedCameraControls(float width)
         {
@@ -220,8 +220,8 @@ namespace ChillinDigiphant.Kart
                 Meter("Reverse / RIGHT", 1, Movement.RightHandHeight);
                 if(MixedInputs){GUILayout.Label("Shoulder steering: "+cameraInput.Steering.ToString("0.00")+" / pinch gap: "+cameraInput.Pinch.ToString("0.00"),note);}
                 else {Meter("Steer / LEFT",SteeringPerformer,Movement.LeftHandHeight);Meter("Steer / RIGHT",SteeringPerformer,Movement.RightHandHeight);Meter("Throw / LEFT",ActionPerformer,Movement.LeftHandHeight);}
-                if(literalBodyActions)GUILayout.Label(MixedInputs ? "Foot lift L / R: "+cameraInput.LeftFootLift.ToString("0.00")+" / "+cameraInput.RightFootLift.ToString("0.00") : "Body rise: "+cameraInput.BodyRise.ToString("0.00")+" / duck depth: "+cameraInput.BodyDrop.ToString("0.00"),note);
-                else {Meter("Jump / RIGHT",ActionPerformer,Movement.RightHandHeight);Meter("Duck / LEAN RIGHT",ActionPerformer,Movement.Lean);}
+                if(!MixedInputs && literalBodyActions)GUILayout.Label("Body rise: "+cameraInput.BodyRise.ToString("0.00")+" / duck depth: "+cameraInput.BodyDrop.ToString("0.00"),note);
+                else if(!MixedInputs) {Meter("Jump / RIGHT",ActionPerformer,Movement.RightHandHeight);Meter("Duck / LEAN RIGHT",ActionPerformer,Movement.Lean);}
             }
             var recording = controller.GetComponent<DigiPhantRecording>(); if (recording) { GUILayout.Space(8); recording.DrawControls(width - 22); }
         }

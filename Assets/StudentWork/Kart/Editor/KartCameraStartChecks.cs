@@ -88,7 +88,7 @@ namespace ChillinDigiphant.Kart.Editor
             else if (stage == 3)
             {
                 Frame(feet:false); if (elapsed < .4) return;
-                Require(!race.controller.CalibrationPending && race.MovementStatus.Contains("feet"), "Missing feet has actionable body guidance"); Next(4);
+                Require(race.controller.CalibrationPending, "P1 feet are optional for team calibration"); Next(4);
             }
             else if (stage == 4)
             {

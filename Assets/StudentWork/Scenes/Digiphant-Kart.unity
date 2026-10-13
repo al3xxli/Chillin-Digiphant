@@ -35438,7 +35438,7 @@ MonoBehaviour:
   invertShoulderSteering: 1
   jumpSensitivity: 0.1
   duckDepth: 0.32
-  faceTurnRange: 0.3
+  faceTurnRange: 0.28
   controller: {fileID: 557435875}
   locomotion: {fileID: 557435877}
   track: {fileID: 552524604}

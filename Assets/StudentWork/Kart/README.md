@@ -41,9 +41,9 @@ alternative gesture layouts, sensitivity, meters, and recording are under
 **Camera settings & diagnostics**. Keys shows only keyboard help and game controls;
 the Sliders option has been removed from the kart UI.
 Select Camera, then **Start with Camera** at the top of the controls or in the
-central prompt. This opens the camera, waits for P1's driving/body inputs and
-P2's steering input, and begins the ten-second neutral countdown. Stand tall
-with feet planted, hands down, and shoulders relaxed. The race countdown starts
+central prompt. This opens the camera, waits for P1's driving inputs and
+P2's steering input, and begins the ten-second neutral countdown. Sit or stand upright
+with P1 hands down and P2 shoulders relaxed. The race countdown starts
 automatically when neutral is saved. P3's hand does not block starting.
 Missing-input guidance stays visible while waiting; Cancel Camera Start, Reset,
 Pause, Stop, or switching to Keys cancels the pending start. You can still use
@@ -51,43 +51,42 @@ Start Camera and Set Neutral separately to calibrate for practice.
 
 | Performer | MediaPipe input | Action |
 | --- | --- | --- |
-| P1, left zone | Pose landmarks | LEFT hand accelerates; RIGHT hand brakes/reverses. Lift either foot to jump once; lower it before the next jump. |
+| P1, left zone | Pose landmarks | LEFT hand accelerates; RIGHT hand brakes/reverses. |
 | P2, center zone | Pose shoulders | Raise your LEFT shoulder to turn right, RIGHT shoulder to turn left. Relax both to straighten; raising both together stays straight. No face, wrist, or foot input is required for steering. |
-| P3, right zone | Hand Landmarker | Hold one hand in a fist to crouch; open it to stand. Pinch thumb and index with the other fingers extended, then release to throw one orange. No body or shoulders needed in this zone. |
+| P3, right zone | Hand Landmarker | Show a peace sign (index and middle extended, ring and little curled) to jump once; relax fingers before repeating. Hold one hand in a fist to crouch; open it to stand. Pinch thumb and index with the other fingers extended, then release to throw one orange. No body or shoulders needed in this zone. |
 
-P1 needs shoulders, hips and both feet visible. Keep one foot planted while
-lifting the other; no physical jump or squat is needed.
+P1 needs shoulders, wrists, and hips visible in Full body tracking; feet are optional.
+Seated / upper body tracking needs only shoulders and wrists. P1 body or
+foot movements no longer trigger jumps in this layout.
 P2 keeps both shoulders in the center section; sit or stand with shoulders relaxed for neutral.
 P3 can show just a hand in the right-hand section. Keep the wrist inside that
 section; a small overlap at the guide keeps fingers from being cropped off.
 Two hands in P3 are rejected until only one remains. A gold finger outline and
-an open/pinched/fist label show detection even before calibration or while driving is
+an open/pinched/fist/peace label show detection even before calibration or while driving is
 held. Brief missed frames up to 0.25 seconds preserve the pinch; longer loss
-requires opening the hand and starting a fresh pinch. Three-person roles follow the existing screen zones,
+requires opening the hand and starting a fresh pinch. Peace signs must stay
+visible for 0.08 seconds; relax fingers for 0.12 seconds before the next jump.
+Holding a peace sign cannot repeat jumps; after hand tracking is lost for 0.25
+seconds, relax fingers before trying again. A peace sign cancels any pending throw. Three-person roles follow the existing screen zones,
 including when the preview is flipped. Ambiguous roles do not take control.
 
-Jump detection compares the two ankle heights against their neutral difference.
-Hip sway while balancing does not cancel a lift, and hidden toes do not discard
-visible ankles. A lift needs two observations; lowering both feet briefly rearms
-it. Ankle gaps up to 0.22 seconds preserve readiness; longer loss requires lowering
-again. Single-frame spikes and whole-body translation cannot trigger a jump.
 A jump requested up to 0.20 seconds before landing is buffered. Hops preserve
 horizontal velocity, and holding acceleration continues gentle forward drive in
 the air. Releasing acceleration in flight does not apply brakes.
 P3's fist holds crouch, with finger-curl hysteresis to resist jitter. Opening the
 fist releases crouch without throwing. A throw requires a separate pinch with
 the spare fingers extended; curling those fingers cancels a prepared throw.
-P3 crouch stays independent of P1's foot tracking. Losing the hand for more than
+P3 hand actions stay independent of P1's foot tracking. Losing the hand for more than
 0.25 seconds releases crouch. Under an overhead obstacle, collision clearance
 still keeps the kart low until it can safely stand.
 Shoulder steering has a calibrated neutral dead zone and smoothing. A brief
 missed shoulder frame is tolerated; loss beyond 0.25 seconds holds driving;
-missing body or hand data disables only those actions. Reassignment, changing
+missing P3 hand data disables hand actions without blocking driving. Reassignment, changing
 layout, or flipping the camera requires new calibration. Gesture sensitivity
-adjusts foot-lift height and shoulder shrug range; steering can be inverted.
+adjusts shoulder shrug range; steering can be inverted.
 
-For two people, P2 combines shoulder steering and hand items. Solo combines all three
-modalities on P1. Four-person mode uses P1 body, P2 shoulders, and P4 hand items.
+For two people, P2 combines shoulder steering and hand actions. Solo combines all three
+modalities on P1. Four-person mode uses P1 body, P2 shoulders, and P4 hand actions.
 These shared-role layouts still require the assigned torso and right wrist.
 Pose and hand inference is local. Shoulder steering reuses the pose model, so
 the face model is no longer loaded. The hand model loads only in the mixed layout.
@@ -272,5 +271,5 @@ backup, and save/reload checks passed during import. The student bridge's
 actions using synthetic packets. See [VALIDATION.md](VALIDATION.md) for evidence
 from model inference and live camera transport. Physical performer gestures and
 mirror orientation still need a human check: raise the left hand, calibrate,
-then try P1 acceleration/foot-lift jumps, P2 shoulder steering, and P3 fist crouch and
-pinch-release throws together.
+then try P1 acceleration/braking, P2 shoulder steering, and P3 peace-sign jumps, fist crouch,
+and pinch-release throws together.

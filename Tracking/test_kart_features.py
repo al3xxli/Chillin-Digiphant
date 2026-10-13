@@ -114,16 +114,32 @@ class KartFeatureTests(unittest.TestCase):
         return points
 
     def test_fist_requires_all_four_fingers_to_curl(self):
-        self.assertEqual(hand_shape(self.hand()), dict(fist=0, pinchAllowed=True))
-        self.assertEqual(hand_shape(self.hand((0,1,2,3))), dict(fist=1, pinchAllowed=False))
+        self.assertEqual(hand_shape(self.hand()), dict(fist=0, pinchAllowed=True, peace=False))
+        self.assertEqual(hand_shape(self.hand((0,1,2,3))), dict(fist=1, pinchAllowed=False, peace=False))
         # Thumb/index pinching can curl the index; spare fingers distinguish it.
-        self.assertEqual(hand_shape(self.hand((0,))), dict(fist=0, pinchAllowed=True))
-        self.assertEqual(hand_shape(self.hand((1,2,3))), dict(fist=0, pinchAllowed=False))
+        self.assertEqual(hand_shape(self.hand((0,))), dict(fist=0, pinchAllowed=True, peace=False))
+        self.assertEqual(hand_shape(self.hand((1,2,3))), dict(fist=0, pinchAllowed=False, peace=False))
 
     def test_hand_shape_is_mirror_rotation_and_scale_invariant(self):
         points = self.hand((0,1,2,3)); before = hand_shape(points)
         for p in points: p.x, p.y, p.z = -3*p.z+5, 3*p.x-2, 3*p.y+7
         self.assertEqual(hand_shape(points), before)
+
+    def test_peace_requires_index_middle_extended_and_other_two_curled(self):
+        for mask in range(16):
+            folded = tuple(i for i in range(4) if mask & (1 << i))
+            shape = hand_shape(self.hand(folded))
+            self.assertEqual(shape['peace'], folded == (2, 3), folded)
+            if shape['peace']:
+                self.assertFalse(shape['pinchAllowed'])
+                self.assertEqual(shape['fist'], 0)
+
+    def test_peace_survives_either_hand_rotation_scale_and_thumb_positions(self):
+        for thumb in (-5, 0, 5):
+            points = self.hand((2, 3))
+            for i in range(1, 5): points[i].x = thumb
+            for p in points: p.x, p.y, p.z = -3*p.z+5, 3*p.x-2, 3*p.y+7
+            self.assertTrue(hand_shape(points)['peace'])
 
     def test_invalid_shape_cannot_make_a_fist(self):
         self.assertIsNone(hand_shape([Point(x=0.,y=0.) for _ in range(21)]))

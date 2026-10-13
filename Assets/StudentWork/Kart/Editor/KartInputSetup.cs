@@ -34,7 +34,7 @@ namespace ChillinDigiphant.Kart.Editor
             EditorSceneManager.SaveScene(scene,backup,true);
             var game=Object.FindAnyObjectByType<KartRace>();
             game.cameraLayout=KartCameraLayout.MixedTeam;game.literalBodyActions=true;
-            game.jumpSensitivity=.10f;game.duckDepth=.32f;game.shoulderTurnRange=.30f;game.invertShoulderSteering=true;
+            game.jumpSensitivity=.10f;game.duckDepth=.32f;game.shoulderTurnRange=.28f;game.invertShoulderSteering=true;
             game.controller.upperBodyOnly=false;
             EditorUtility.SetDirty(game);EditorUtility.SetDirty(game.controller);
             EditorSceneManager.MarkSceneDirty(scene);EditorSceneManager.SaveScene(scene);

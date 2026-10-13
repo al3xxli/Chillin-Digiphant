@@ -23,22 +23,22 @@ Windows x64 is the automated setup path. See [INSTALL.md](INSTALL.md) for manual
 
 - A computer capable of running this Unity/URP project, keyboard, and screen visible to performers. No Arduino, wearables, or additional controllers required.
 - Camera mode needs a webcam, OS camera permission, and space for the group. Close competing camera apps. Local UDP ports **5055, 5056, 5057** must be available; run one camera session at a time.
-- Use even front lighting and a securely placed camera facing the group. Adjust distance using the preview, rather than a fixed measurement: P1 must fit shoulders, wrists, hips, and both feet into the left zone; P2 shoulders fit the center; P3 hand fits the right.
-- Leave room for hand raises and comfortable foot lifts without contacting people or equipment. Keep one foot planted: the default layout does not require physically jumping. Seated alternatives are available.
+- Use even front lighting and a securely placed camera facing the group. Adjust distance using the preview, rather than a fixed measurement: P1 must fit shoulders, wrists, and hips into the left zone; P2 shoulders fit the center; P3 hand fits the right.
+- Leave room for hand raises without contacting people or equipment. The default layout works seated or standing; feet need not be visible.
 
 ## Team camera controls
 
 Choose **Camera**, three performers, and **Body + shoulders + hand**. Arrange **P1 / P2 / P3 from left to right in the displayed preview**. Camera selection, mirror, sensitivity, and alternatives are under Camera settings & diagnostics. Check orientation with a raised left hand. Mirror/layout/reassignment changes require new neutral calibration.
 
-Choose **Start with Camera**. Hold feet planted, hands down, and shoulders relaxed during the ten-second neutral countdown; the race starts afterward. For practice, use Start Camera and Set Neutral separately. Follow missing-input guidance while waiting.
+Choose **Start with Camera**. Sit or stand upright with P1 hands down and P2 shoulders relaxed during the ten-second neutral countdown; the race starts afterward. For practice, use Start Camera and Set Neutral separately. Follow missing-input guidance while waiting.
 
 | Role | Action | Result |
 | --- | --- | --- |
 | P1: body, left | Raise LEFT / RIGHT hand | Accelerate / brake then reverse |
-| P1 | Lift either foot, lower it before repeating | Jump |
 | P2: shoulders, center | Raise LEFT / RIGHT shoulder | Turn right / turn left (default reversed steering) |
 | P2 | Relax shoulders | Straighten |
-| P3: hand, right | Fist / open hand | Crouch / stand when clear |
+| P3: hand, right | Peace sign: index and middle extended, ring and little curled; relax fingers before repeating | Jump once |
+| P3 | Fist / open hand | Crouch / stand when clear |
 | P3 | Pinch thumb and index with other fingers extended, then release | Throw an orange |
 
 Collect orange boxes before throwing. P2 may sit or stand. In three-person mode P3 needs only **one hand**, with wrist/fingers visible inside the hand zone; two hands are rejected. Tracking loss may hold driving or disable the affected action. See the [kart guide](Assets/StudentWork/Kart/README.md) for two/four-person layouts and seated Simple body alternatives.

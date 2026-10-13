@@ -76,6 +76,8 @@ def hand_shape(points):
     Compare each finger's tip-to-knuckle distance with its joint-chain length.
     This is invariant to camera mirroring, hand rotation, and hand size.
     Pinching is allowed only while at least two other fingers remain extended.
+    Peace uses extended index/middle and curled ring/little fingers; the thumb
+    is unrestricted, and either hand works without requiring vertical fingers.
     """
     coords = [(p.x, p.y, getattr(p, 'z', 0)) for p in points]
     if len(coords) != 21 or any(not math.isfinite(v) for p in coords for v in p):
@@ -87,7 +89,9 @@ def hand_shape(points):
             return None
         extension = math.dist(coords[base], coords[base+3]) / length
         curls.append(max(0, min(1, (.9-extension)/.45)))
-    return dict(fist=min(curls), pinchAllowed=sum(c < .45 for c in curls[1:]) >= 2)
+    peace = curls[0] < .25 and curls[1] < .25 and curls[2] > .65 and curls[3] > .65
+    return dict(fist=min(curls), pinchAllowed=sum(c < .45 for c in curls[1:]) >= 2,
+                peace=peace)
 
 
 def visible_wrist(point):
