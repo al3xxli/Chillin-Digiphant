@@ -2,7 +2,7 @@
 
 DigiPhant Kart / Rainbow Savannah is a Unity elephant racing game with local webcam tracking for team play and keyboard controls for solo play.
 
-**New to Unity?** Follow the [step-by-step guide to downloading and playing DigiPhant Kart](SIMPLIFIED_GUIDE.md). No programming experience needed.
+**New to Unity?** Follow the [Simplified Guide](SIMPLIFIED_GUIDE.md) that goes through all the installations you need prior to booting up the game. No programming experience needed.
 
 ## Download and install
 
