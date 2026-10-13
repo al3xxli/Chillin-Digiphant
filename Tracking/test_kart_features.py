@@ -114,32 +114,73 @@ class KartFeatureTests(unittest.TestCase):
         return points
 
     def test_fist_requires_all_four_fingers_to_curl(self):
-        self.assertEqual(hand_shape(self.hand()), dict(fist=0, pinchAllowed=True, peace=False))
-        self.assertEqual(hand_shape(self.hand((0,1,2,3))), dict(fist=1, pinchAllowed=False, peace=False))
+        self.assertEqual(hand_shape(self.hand()), dict(fist=0, pinchAllowed=True, thumbsUp=False))
+        self.assertEqual(hand_shape(self.hand((0,1,2,3))), dict(fist=1, pinchAllowed=False, thumbsUp=False))
         # Thumb/index pinching can curl the index; spare fingers distinguish it.
-        self.assertEqual(hand_shape(self.hand((0,))), dict(fist=0, pinchAllowed=True, peace=False))
-        self.assertEqual(hand_shape(self.hand((1,2,3))), dict(fist=0, pinchAllowed=False, peace=False))
+        self.assertEqual(hand_shape(self.hand((0,))), dict(fist=0, pinchAllowed=True, thumbsUp=False))
+        self.assertEqual(hand_shape(self.hand((1,2,3))), dict(fist=0, pinchAllowed=False, thumbsUp=False))
 
     def test_hand_shape_is_mirror_rotation_and_scale_invariant(self):
         points = self.hand((0,1,2,3)); before = hand_shape(points)
         for p in points: p.x, p.y, p.z = -3*p.z+5, 3*p.x-2, 3*p.y+7
         self.assertEqual(hand_shape(points), before)
 
-    def test_peace_requires_index_middle_extended_and_other_two_curled(self):
+    def thumbs_up(self, folded=(0, 1, 2, 3), relaxed=False):
+        points = self.hand(folded)
+        if relaxed:
+            for finger in folded:
+                base = (5, 9, 13, 17)[finger]
+                for offset, (y, z) in enumerate(((0, 0), (0, 1), (.65, 1), (1.15, .85))):
+                    points[base+offset] = Point(x=float(finger), y=y, z=z)
+        for i, y in ((2, 0), (3, -.75), (4, -1.5)):
+            points[i] = Point(x=-1., y=y, z=0.)
+        return points
+
+    def test_thumbs_up_overrides_fist_and_disables_throw(self):
+        for relaxed in (False, True):
+            self.assertEqual(hand_shape(self.thumbs_up(relaxed=relaxed)),
+                             dict(fist=0, pinchAllowed=False, thumbsUp=True))
+
+    def test_thumbs_up_requires_all_four_fingers_folded(self):
         for mask in range(16):
             folded = tuple(i for i in range(4) if mask & (1 << i))
-            shape = hand_shape(self.hand(folded))
-            self.assertEqual(shape['peace'], folded == (2, 3), folded)
-            if shape['peace']:
-                self.assertFalse(shape['pinchAllowed'])
-                self.assertEqual(shape['fist'], 0)
+            self.assertEqual(hand_shape(self.thumbs_up(folded))['thumbsUp'], mask == 15)
+        self.assertFalse(hand_shape(self.hand((2, 3)))['thumbsUp'], 'Peace no longer jumps')
 
-    def test_peace_survives_either_hand_rotation_scale_and_thumb_positions(self):
-        for thumb in (-5, 0, 5):
-            points = self.hand((2, 3))
-            for i in range(1, 5): points[i].x = thumb
-            for p in points: p.x, p.y, p.z = -3*p.z+5, 3*p.x-2, 3*p.y+7
-            self.assertTrue(hand_shape(points)['peace'])
+    def test_thumbs_up_survives_mirror_scale_and_comfortable_tilt(self):
+        for mirror in (-1, 1):
+            for angle in (-math.pi/4, 0, math.pi/4):
+                points = self.thumbs_up()
+                for p in points:
+                    x, y = p.x*math.cos(angle)-p.y*math.sin(angle), p.x*math.sin(angle)+p.y*math.cos(angle)
+                    p.x, p.y, p.z = mirror*.02*x+.1, .02*y-.2, .02*p.z+.3
+                self.assertTrue(hand_shape(points)['thumbsUp'])
+
+    def test_sideways_down_and_tucked_thumb_do_not_jump(self):
+        for angle in (math.pi/2, -math.pi/2, math.pi):
+            points = self.thumbs_up()
+            for p in points:
+                p.x, p.y = p.x*math.cos(angle)-p.y*math.sin(angle), p.x*math.sin(angle)+p.y*math.cos(angle)
+            self.assertFalse(hand_shape(points)['thumbsUp'])
+        self.assertFalse(hand_shape(self.hand((0, 1, 2, 3)))['thumbsUp'])
+        points = self.thumbs_up()
+        points[4] = Point(x=-.1, y=.1, z=0.)
+        self.assertFalse(hand_shape(points)['thumbsUp'])
+
+    def test_thumb_direction_uses_image_landmarks(self):
+        world = self.thumbs_up()
+        for p in world: p.x, p.y, p.z = p.y, p.z, p.x
+        self.assertTrue(hand_shape(world, self.thumbs_up())['thumbsUp'])
+        view = self.thumbs_up()
+        for p in view: p.y = -p.y
+        self.assertFalse(hand_shape(world, view)['thumbsUp'])
+        view[4].y = math.nan
+        self.assertIsNone(hand_shape(world, view))
+
+    def test_degenerate_finger_joint_is_rejected(self):
+        points = self.thumbs_up()
+        points[14] = points[13]
+        self.assertIsNone(hand_shape(points))
 
     def test_invalid_shape_cannot_make_a_fist(self):
         self.assertIsNone(hand_shape([Point(x=0.,y=0.) for _ in range(21)]))

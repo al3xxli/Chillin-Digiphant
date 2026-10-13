@@ -105,9 +105,9 @@ class KartLandmarkers:
                     # not turn a perfectly valid, small-in-frame hand into no hand.
                     local = [SimpleNamespace(x=p.x, y=p.y*h*height/(w*width), z=getattr(p, 'z', 0)) for p in points]
                     ratio = pinch_ratio(local)
-                    shape = hand_shape(world_hands[hand_index] if hand_index < len(world_hands) else local)
+                    shape = hand_shape(world_hands[hand_index] if hand_index < len(world_hands) else local, local)
                     if ratio is not None:
-                        candidates.append((ratio, full, shape or dict(fist=0, pinchAllowed=False, peace=False)))
+                        candidates.append((ratio, full, shape or dict(fist=0, pinchAllowed=False, thumbsUp=False)))
                 elif count != 3:
                     self.hand_status = f'P{hand_slot}: keep your RIGHT hand separate and wrist visible'
             if len(candidates) == 1:

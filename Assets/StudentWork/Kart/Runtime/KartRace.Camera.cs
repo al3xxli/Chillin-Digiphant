@@ -126,10 +126,10 @@ namespace ChillinDigiphant.Kart
                 bool literal=GUILayout.Toggle(literalBodyActions,"Literal jump / duck (feet in view)",toggle);
                 if(literal!=literalBodyActions)SetLiteralActions(literal);
             }
-            GUILayout.Label(MixedInputs ? "P1 BODY: LEFT up drives / RIGHT up brakes\nP"+SteeringPerformer+" SHOULDERS: "+ShoulderSteeringHelp+"\nP"+ActionPerformer+" HAND: "+(controller.performerCount==3?"one hand in P3 section; ":"right hand; ")+"peace sign (index + middle up) to jump; fist to crouch; pinch + release to throw" :
+            GUILayout.Label(MixedInputs ? "P1 BODY: LEFT up drives / RIGHT up brakes\nP"+SteeringPerformer+" SHOULDERS: "+ShoulderSteeringHelp+"\nP"+ActionPerformer+" HAND: "+(controller.performerCount==3?"one hand in P3 section; ":"right hand; ")+"thumbs up (other fingers curled) to jump; fist to crouch; pinch + release to throw" :
                 "P1: LEFT up accelerates / RIGHT up brakes\nP"+SteeringPerformer+": LEFT up steers left / RIGHT up steers right\nP"+ActionPerformer+": LEFT held throws\n"+(literalBodyActions?"P"+BodyPerformer+": physically jump and duck":"P"+ActionPerformer+": raise RIGHT to jump / lean RIGHT to duck"),note);
             GUILayout.Label(!MixedInputs && literalBodyActions ? "Neutral: stand tall with both feet planted and hands lowered; relax both shoulders." :
-                MixedInputs ? "Neutral: sit or stand upright, P1 hands lowered, P2 shoulders relaxed. P3: relax fingers between peace-sign jumps." : "Neutral: sit upright, hands lowered, shoulders relaxed. Lower RIGHT between jumps.",note);
+                MixedInputs ? "Neutral: sit or stand upright, P1 hands lowered, P2 shoulders relaxed. P3: relax fingers between thumbs-up jumps." : "Neutral: sit upright, hands lowered, shoulders relaxed. Lower RIGHT between jumps.",note);
             if(controller.performerCount<3 && MixedInputs)GUILayout.Label(controller.performerCount==1 ? "Solo combines body, shoulders and hand roles on P1." : "Two people: P1 body; P2 shoulders + hand actions.",note);
             if(MixedInputs)
             {

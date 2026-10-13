@@ -190,7 +190,7 @@ namespace ChillinDigiphant.Kart
             }
             GUILayout.Label(MixedInputs ? "P1 BODY: left hand drives / right brakes\nP" + SteeringPerformer + " SHOULDERS: " + ShoulderSteeringHelp + "\nP" + ActionPerformer + " HAND: " + (count == 3 ? "one hand only / " : "right hand / ") + "pinch + release throws" :
                 "P1: left hand drives / right brakes\nP" + SteeringPerformer + ": raise left / right hand to steer\nP" + ActionPerformer + ": hold left hand to throw", note);
-            GUILayout.Label(MixedInputs ? "P" + ActionPerformer + ": peace sign (index + middle up) to jump; relax fingers to rearm." + "\nP" + ActionPerformer + ": hold a fist to crouch; open to stand." : literalBodyActions ? "P" + BodyPerformer + ": jump and duck with your body. Keep feet visible." : "P" + ActionPerformer + ": raise right hand to jump / lean right to duck.", note);
+            GUILayout.Label(MixedInputs ? "P" + ActionPerformer + ": thumbs up (other fingers curled) to jump; relax fingers to rearm." + "\nP" + ActionPerformer + ": hold a fist to crouch; open to stand." : literalBodyActions ? "P" + BodyPerformer + ": jump and duck with your body. Keep feet visible." : "P" + ActionPerformer + ": raise right hand to jump / lean right to duck.", note);
         }
         void DrawAdvancedCameraControls(float width)
         {

@@ -53,7 +53,7 @@ Start Camera and Set Neutral separately to calibrate for practice.
 | --- | --- | --- |
 | P1, left zone | Pose landmarks | LEFT hand accelerates; RIGHT hand brakes/reverses. |
 | P2, center zone | Pose shoulders | Raise your LEFT shoulder to turn right, RIGHT shoulder to turn left. Relax both to straighten; raising both together stays straight. No face, wrist, or foot input is required for steering. |
-| P3, right zone | Hand Landmarker | Show a peace sign (index and middle extended, ring and little curled) to jump once; relax fingers before repeating. Hold one hand in a fist to crouch; open it to stand. Pinch thumb and index with the other fingers extended, then release to throw one orange. No body or shoulders needed in this zone. |
+| P3, right zone | Hand Landmarker | Show a thumbs up (thumb pointing upward, other fingers curled) to jump once; relax fingers before repeating. Hold one hand in a fist to crouch; open it to stand. Pinch thumb and index with the other fingers extended, then release to throw one orange. No body or shoulders needed in this zone. |
 
 P1 needs shoulders, wrists, and hips visible in Full body tracking; feet are optional.
 Seated / upper body tracking needs only shoulders and wrists. P1 body or
@@ -62,12 +62,12 @@ P2 keeps both shoulders in the center section; sit or stand with shoulders relax
 P3 can show just a hand in the right-hand section. Keep the wrist inside that
 section; a small overlap at the guide keeps fingers from being cropped off.
 Two hands in P3 are rejected until only one remains. A gold finger outline and
-an open/pinched/fist/peace label show detection even before calibration or while driving is
+an open/pinched/fist/thumbs-up label show detection even before calibration or while driving is
 held. Brief missed frames up to 0.25 seconds preserve the pinch; longer loss
-requires opening the hand and starting a fresh pinch. Peace signs must stay
+requires opening the hand and starting a fresh pinch. Thumbs-up gestures must stay
 visible for 0.08 seconds; relax fingers for 0.12 seconds before the next jump.
-Holding a peace sign cannot repeat jumps; after hand tracking is lost for 0.25
-seconds, relax fingers before trying again. A peace sign cancels any pending throw. Three-person roles follow the existing screen zones,
+Holding thumbs up cannot repeat jumps, including across tracking loss. Open the
+hand before the first jump and between jumps. Thumbs up overrides fist crouch. A thumbs up cancels any pending throw. Three-person roles follow the existing screen zones,
 including when the preview is flipped. Ambiguous roles do not take control.
 
 A jump requested up to 0.20 seconds before landing is buffered. Hops preserve
@@ -271,5 +271,5 @@ backup, and save/reload checks passed during import. The student bridge's
 actions using synthetic packets. See [VALIDATION.md](VALIDATION.md) for evidence
 from model inference and live camera transport. Physical performer gestures and
 mirror orientation still need a human check: raise the left hand, calibrate,
-then try P1 acceleration/braking, P2 shoulder steering, and P3 peace-sign jumps, fist crouch,
+then try P1 acceleration/braking, P2 shoulder steering, and P3 thumbs-up jumps, fist crouch,
 and pinch-release throws together.

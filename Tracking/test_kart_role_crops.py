@@ -46,17 +46,17 @@ class KartRoleCropTests(unittest.TestCase):
                     self.assertEqual('hand' in result.get(3, {}), number == 1)
                     self.assertFalse(tasks.face.detect_for_video.called)
 
-    def test_peace_is_sent_on_p3_independent_hand_channel(self):
+    def test_thumbs_up_is_sent_on_p3_independent_hand_channel(self):
         from test_kart_features import KartFeatureTests
         for mirror in (False, True):
             tasks = KartLandmarkers.__new__(KartLandmarkers)
             tasks.mp = P(Image=lambda **args: args['data'], ImageFormat=P(SRGB=1))
-            points = [P(x=.5, y=.5) for _ in range(21)]
-            points[5].x=.4; points[17].x=.6; points[8].x=.65
+            points = [P(x=.5+p.x*.03, y=.5+p.y*.06, z=p.z*.03)
+                      for p in KartFeatureTests().thumbs_up()]
             tasks.hand = P(detect_for_video=Mock(return_value=P(
-                hand_landmarks=[points], hand_world_landmarks=[KartFeatureTests().hand((2, 3))])))
+                hand_landmarks=[points], hand_world_landmarks=[KartFeatureTests().thumbs_up()])))
             result = tasks.channels(np.zeros((480,640,3),dtype=np.uint8),10,{},[],3,mirror)
-            self.assertTrue(result[3]['hand']['peace'])
+            self.assertTrue(result[3]['hand']['thumbsUp'])
             self.assertFalse(result[3]['hand']['pinchAllowed'])
             self.assertEqual(result[3]['hand']['fist'], 0)
 

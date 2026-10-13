@@ -1,6 +1,27 @@
 # DigiPhant Kart verification — October 8, 2026
 
-## P3 peace-sign jumping - October 13, 2026
+## P3 thumbs-up jumping - October 13, 2026
+
+Thumbs up replaces the peace sign in the mixed team layout. Keep all four
+fingers curled and point the thumb upward; open the hand before the first jump
+and between jumps. The classifier uses world landmarks for finger shape and
+image landmarks for upward direction. Thumbs up overrides the fist channel,
+releases crouch, and cancels any pending pinch throw.
+
+- **Python:** 44 tests passed, covering tight/relaxed fingers, either hand,
+  mirrored/scaled/tilted poses, sideways/down/tucked-thumb rejection, peace-sign
+  rejection, and P3 hand-only routing in both preview orientations.
+- **Unity:** runtime/editor compilation and 84 Play-mode input checks passed
+  (`Logs/Kart/input-checks.txt`, `KART_INPUT_VALIDATION_OK`). Checks cover the new
+  JSON field, rejection of old peace packets, fist-to-thumbs-up priority,
+  release/rearm, tracking gaps, actual Rigidbody jumps, momentum, throws,
+  shoulder steering, keyboard fallback, and overhead clearance.
+
+These are synthetic landmark/packet checks and real Unity physics checks.
+Physical thumbs-up recognition and simultaneous team play still require a
+performer check. Earlier peace-sign results below describe the superseded mapping.
+
+## Previous P3 peace-sign jumping - October 13, 2026
 
 The default mixed team layout now assigns jumping to P3's index/middle peace
 sign; P1 foot lifts and body movement do not jump. P3 keeps fist crouch and

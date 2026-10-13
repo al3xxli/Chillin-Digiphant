@@ -258,7 +258,7 @@ def main():
                     try:
                         if kart_tasks is None:
                             kart_tasks = KartLandmarkers()
-                            print('Kart body / shoulder / hand controls ready. P3 hand zone accepts a hand alone; peace sign jumps, fist crouches, pinch/release throws.', flush=True)
+                            print('Kart body / shoulder / hand controls ready. P3 hand zone accepts a hand alone; thumbs up jumps, fist crouches, pinch/release throws.', flush=True)
                         extras = kart_tasks.channels(rgb, timestamp, assignments, observations, args.people, MIRROR_PREVIEW)
                     except Exception as error:
                         kart_error = 'Hand model unavailable: ' + str(error)

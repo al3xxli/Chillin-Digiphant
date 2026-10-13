@@ -16,6 +16,6 @@ For puppet-only work, duplicate Assets/DigiPhant/Scenes/DigiPhant.unity. Create 
 
 ## Acceptance and handoff
 
-Check imports/tests, Unity Console, missing scripts/references/materials, validation, and keyboard actions. Confirm one bridge/camera session and localhost UDP 5055–5057. Test asymmetric mirror orientation, neutral countdown, P1 hand driving, reversed P2 shoulder steering, and P3 peace-sign jump/fist crouch/pinch-release together. Test tracking recovery and save/reload. Stop processes you start. Report checks actually performed and remaining target-hardware/performer work. Editor auto-launch does not establish standalone build support.
+Check imports/tests, Unity Console, missing scripts/references/materials, validation, and keyboard actions. Confirm one bridge/camera session and localhost UDP 5055–5057. Test asymmetric mirror orientation, neutral countdown, P1 hand driving, reversed P2 shoulder steering, and P3 thumbs-up jump/fist crouch/pinch-release together. Test tracking recovery and save/reload. Stop processes you start. Report checks actually performed and remaining target-hardware/performer work. Editor auto-launch does not establish standalone build support.
 
 Suggested prompt: Read AGENTS.md and AGENT_SETUP.md, restore this project in the required Unity version, open the saved kart scene, preserve metadata/controls, validate available checks, and document remaining physical tests. For scene integration, work on a saved copy and preserve existing work.

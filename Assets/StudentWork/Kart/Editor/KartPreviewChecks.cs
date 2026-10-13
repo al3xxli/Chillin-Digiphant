@@ -92,7 +92,7 @@ namespace ChillinDigiphant.Kart.Editor
                 { shoulderFrames++; minShrug=Mathf.Min(minShrug,person.shoulders.turn); maxShrug=Mathf.Max(maxShrug,person.shoulders.turn); }
             }
             File.WriteAllText("Logs/Kart/live-hand-check.txt", "Live packets=" + frames + "\nHand frames=" + handFrames + "\n" + packet.kartStatus + "\n" + packet.kartHandStatus + "\n" + race.cameraInput.HandFeedback(now) + "\n");
-            File.WriteAllText("Logs/Kart/live-shrug-jump-check.txt", "Live packets="+frames+"\nP1 ankle frames="+bodyFrames+"\nP2 shoulder frames="+shoulderFrames+"\nShoulder range="+minShrug.ToString("F3")+" to "+maxShrug.ToString("F3")+"\nCalibrated="+race.cameraInput.Calibrated+"\nP3 peace sign="+race.cameraInput.Peace+"\nJump count="+race.player.JumpCount+"\nSpeed="+race.player.Speed.ToString("F2")+"\n"+packet.kartStatus+"\n");
+            File.WriteAllText("Logs/Kart/live-shrug-jump-check.txt", "Live packets="+frames+"\nP1 ankle frames="+bodyFrames+"\nP2 shoulder frames="+shoulderFrames+"\nShoulder range="+minShrug.ToString("F3")+" to "+maxShrug.ToString("F3")+"\nCalibrated="+race.cameraInput.Calibrated+"\nP3 thumbs up="+race.cameraInput.ThumbsUp+"\nJump count="+race.player.JumpCount+"\nSpeed="+race.player.Speed.ToString("F2")+"\n"+packet.kartStatus+"\n");
         }
     }
 }

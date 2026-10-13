@@ -37,7 +37,7 @@ Choose **Start with Camera**. Sit or stand upright with P1 hands down and P2 sho
 | P1: body, left | Raise LEFT / RIGHT hand | Accelerate / brake then reverse |
 | P2: shoulders, center | Raise LEFT / RIGHT shoulder | Turn right / turn left (default reversed steering) |
 | P2 | Relax shoulders | Straighten |
-| P3: hand, right | Peace sign: index and middle extended, ring and little curled; relax fingers before repeating | Jump once |
+| P3: hand, right | Thumbs up: thumb pointing upward, other fingers curled; open the hand before repeating | Jump once |
 | P3 | Fist / open hand | Crouch / stand when clear |
 | P3 | Pinch thumb and index with other fingers extended, then release | Throw an orange |
 

@@ -15,16 +15,17 @@ namespace ChillinDigiphant.Kart
         public float Pinch { get; private set; }
         public bool Fist { get; private set; }
         public bool PinchAllowed { get; private set; }
-        public bool Peace { get; private set; }
+        public bool ThumbsUp { get; private set; }
         public bool handActions = true;
         public string BridgeStatus { get; private set; } = "Waiting for camera";
         public string HandStatus { get; private set; } = "Waiting for hand tracking";
         const float HandGrace = .25f;
+        const float ThumbsUpSampleGap = .75f;
         public float jumpThreshold = .10f, duckThreshold = .32f, shoulderRange = .28f;
         BodyMotionFrame body, neutral;
         float bodyAt=-100, shouldersAt=-100, handAt=-100, lastBody=-100, lastShoulders=-100;
-        float shoulderNeutral, rawShoulders, previousRise, jumpAt=-100, throwAt=-100, closedAt=-100, groundAt=-100, peaceAt=-100, peaceReleasedAt=-100;
-        bool jumpReady, pinchReady, pinched, peaceReady;
+        float shoulderNeutral, rawShoulders, previousRise, jumpAt=-100, throwAt=-100, closedAt=-100, groundAt=-100, thumbsUpAt=-100, thumbsUpReleasedAt=-100;
+        bool jumpReady, pinchReady, pinched, thumbsUpReady;
         public bool BodyVisible(float now) => body != null && now >= bodyAt && now-bodyAt < .35f;
         public bool ShouldersVisible(float now) => now >= shouldersAt && now-shouldersAt < .25f;
         public bool HandVisible(float now) => now >= handAt && now-handAt < HandGrace;
@@ -35,14 +36,14 @@ namespace ChillinDigiphant.Kart
             Unit(b.confidence) && b.confidence>=.5f && Finite(b.scale) && b.scale>.035f && b.scale<.8f;
         public void Reset()
         {
-            BridgeStatus="Waiting for camera";HandStatus="Waiting for hand tracking";Pinch=0;Fist=PinchAllowed=Peace=false;
+            BridgeStatus="Waiting for camera";HandStatus="Waiting for hand tracking";Pinch=0;Fist=PinchAllowed=ThumbsUp=false;
             Calibrated=false; neutral=body=null; bodyAt=shouldersAt=handAt=lastBody=lastShoulders=-100;
             Steering=BodyRise=BodyDrop=0; ResetActions();
         }
         public void ResetActions()
         {
-            Duck=jumpReady=pinchReady=pinched=peaceReady=Peace=false;
-            jumpAt=throwAt=closedAt=groundAt=peaceAt=peaceReleasedAt=-100;
+            Duck=jumpReady=pinchReady=pinched=thumbsUpReady=ThumbsUp=false;
+            jumpAt=throwAt=closedAt=groundAt=thumbsUpAt=thumbsUpReleasedAt=-100;
         }
         public bool CanCalibrate(float now, bool requireBody, bool requireShoulders)
         {
@@ -90,18 +91,26 @@ namespace ChillinDigiphant.Kart
             else if(!ShouldersVisible(now)) { shouldersAt=-100;Steering=0; }
             if(nextHand!=null && Unit(nextHand.confidence) && nextHand.confidence>=.5f && Finite(nextHand.pinch) && nextHand.pinch>=0 && nextHand.pinch<10 && Unit(nextHand.fist))
             {
-                bool gap=now-handAt>=HandGrace;handAt=now;Pinch=nextHand.pinch;
-                if(gap){pinchReady=pinched=Fist=peaceReady=false;closedAt=peaceAt=peaceReleasedAt=-100;if(handActions)jumpAt=-100;}
-                Fist=nextHand.fist>(Fist?.45f:.65f);
-                Peace=nextHand.peace && !Fist;
-                PinchAllowed=nextHand.pinchAllowed && !Peace;
+                bool gap=now-handAt>=HandGrace;
+                bool thumbsUpGap=now-handAt>=ThumbsUpSampleGap;
+                handAt=now;Pinch=nextHand.pinch;
+                if(gap){pinchReady=pinched=Fist=false;closedAt=-100;if(handActions)jumpAt=-100;}
+                // Camera inference can run below 4 FPS. Its next valid sample
+                // must not erase the release that armed a thumbs-up jump.
+                // A consumed gesture stays disarmed through any tracking gap.
+                if(thumbsUpGap)thumbsUpAt=thumbsUpReleasedAt=-100;
+                // Thumbs up also curls all four fingers: it must win over the
+                // fist channel, including when transitioning out of crouch.
+                ThumbsUp=nextHand.thumbsUp;
+                Fist=!ThumbsUp && nextHand.fist>(Fist?.45f:.65f);
+                PinchAllowed=nextHand.pinchAllowed && !ThumbsUp;
                 if(handActions)
                 {
                     Duck=Calibrated && Fist;
                     ProcessHandJump(now);
                 }
                 // Curling a fist can also bring thumb and index together. A fist
-                // or peace sign cancels the throw latch before release.
+                // or thumbs up cancels the throw latch before release.
                 if(Fist || !PinchAllowed){pinchReady=pinched=false;closedAt=throwAt=-100;}
                 else if(Calibrated)
                 {
@@ -118,10 +127,10 @@ namespace ChillinDigiphant.Kart
             else
             {
                 // Missing observations cannot count toward either dwell timer.
-                peaceAt=peaceReleasedAt=-100;
+                thumbsUpAt=thumbsUpReleasedAt=-100;
                 if (!HandVisible(now))
                 {
-                    handAt=-100;pinchReady=pinched=Fist=PinchAllowed=Peace=peaceReady=false;throwAt=-100;
+                    handAt=-100;pinchReady=pinched=Fist=PinchAllowed=ThumbsUp=false;throwAt=-100;
                     if(handActions){Duck=false;jumpAt=-100;}
                 }
             }
@@ -129,27 +138,27 @@ namespace ChillinDigiphant.Kart
         public string HandFeedback(float now)
         {
             if (!HandVisible(now)) return HandStatus;
-            if (Peace) return "HAND: peace sign / jump / relax fingers before next jump";
+            if (ThumbsUp) return thumbsUpReady ? "HAND: thumbs up / hold briefly to jump" : "HAND: thumbs up / open hand, then show thumbs up to jump";
             if (Fist) return "HAND: fist / crouch held / open to stand";
-            if (!PinchAllowed) return "HAND: peace sign to jump / fist to crouch / open fingers to throw";
+            if (!PinchAllowed) return "HAND: thumbs up to jump / fist to crouch / open fingers to throw";
             if (Pinch < .30f) return "HAND: pinched / open fingers to throw";
-            if (Pinch > .65f) return "HAND: open / peace sign to jump / pinch thumb + index to throw";
+            if (Pinch > .65f) return "HAND: open / thumbs up to jump / pinch thumb + index to throw";
             return "HAND: detected / close thumb + index together";
         }
         void ProcessHandJump(float now)
         {
-            if(!Calibrated){peaceReady=false;peaceAt=peaceReleasedAt=-100;return;}
-            if(!Peace)
+            if(!Calibrated){thumbsUpReady=false;thumbsUpAt=thumbsUpReleasedAt=-100;return;}
+            if(!ThumbsUp)
             {
-                peaceAt=-100;
-                if(peaceReleasedAt<0)peaceReleasedAt=now;
-                if(now-peaceReleasedAt>=.12f)peaceReady=true;
+                thumbsUpAt=-100;
+                if(thumbsUpReleasedAt<0)thumbsUpReleasedAt=now;
+                if(now-thumbsUpReleasedAt>=.12f)thumbsUpReady=true;
                 return;
             }
-            peaceReleasedAt=-100;
-            if(!peaceReady)return;
-            if(peaceAt<0)peaceAt=now;
-            else if(now-peaceAt>=.08f){jumpAt=now;peaceReady=false;peaceAt=-100;}
+            thumbsUpReleasedAt=-100;
+            if(!thumbsUpReady)return;
+            if(thumbsUpAt<0)thumbsUpAt=now;
+            else if(now-thumbsUpAt>=.08f){jumpAt=now;thumbsUpReady=false;thumbsUpAt=-100;}
         }
         void ProcessBody(float now)
         {
